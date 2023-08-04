@@ -3,12 +3,11 @@ package apiBudget.apiBudget.model;
 import java.util.Date;
 
 
-import apiBudget.apiBudget.enums.Type;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -35,8 +34,6 @@ public class Depenses {
 
     private double montant;
 
-    @Enumerated(EnumType.STRING)
-    private Type type;
 
     private Date date_depenses;
 
@@ -50,8 +47,14 @@ public class Depenses {
 
 //une depense ne peut etre lie qu'a une et une seule categorie
      @ManyToOne
-    @JoinColumn(name ="id_categories",nullable = false)
-    private Categories categories;
+    @JoinColumn(name ="id_types",nullable = false)
+    private Types types;
+
+
+//une depense est deduite d'une et une seule budget
+     @ManyToOne
+    @JoinColumn(name ="id_budgets",nullable = false)
+    private Budgets budgets;
 
 
 

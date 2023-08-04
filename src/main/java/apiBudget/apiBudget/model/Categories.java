@@ -28,7 +28,7 @@ public class Categories {
    private String nom;
 
 
-   //une categorie peut appartenir 0 ou plusieurs depenses
+   //une categorie peut appartenir 0 ou plusieurs budgets
    @OneToMany(mappedBy = "categories", cascade = CascadeType.ALL)
-   private List<Depenses> depenses;
+   private List<Budgets> budgets;
 }

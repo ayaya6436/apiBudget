@@ -45,7 +45,5 @@ public class Users {
    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
    private List<Budgets> budgets;
 
-   //un user  peut avoir 0 ou plusieurs alertes
-   @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
-   private List<Alertes> alertes;
+   
 }

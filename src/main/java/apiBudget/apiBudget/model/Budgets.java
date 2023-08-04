@@ -1,13 +1,16 @@
 package apiBudget.apiBudget.model;
 
 import java.util.Date;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -32,8 +35,16 @@ public class Budgets {
     private Users users;
 
 //une categorie ne peut etre lie qu'a un et un seul budget
-    @OneToOne()
+    @ManyToOne()
     @JoinColumn(name = "id_categories",nullable = false)
     private Categories categories;
+
+      //un budget peut effectuer 0 ou plusieurs depenses
+   @OneToMany(mappedBy = "budgets", cascade = CascadeType.ALL)
+   private List<Depenses> depenses;
+
+   //un budget  peut avoir 0 ou plusieurs alertes
+   @OneToMany(mappedBy = "budgets", cascade = CascadeType.ALL)
+   private List<Alertes> alertes;
 
 }
