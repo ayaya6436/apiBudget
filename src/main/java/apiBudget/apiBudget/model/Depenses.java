@@ -1,10 +1,10 @@
 package apiBudget.apiBudget.model;
 
 import java.util.Date;
-import java.util.List;
+
 
 import apiBudget.apiBudget.enums.Type;
-import jakarta.persistence.CascadeType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,7 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,14 +48,11 @@ public class Depenses {
     @JoinColumn(name ="id_users",nullable = false)
     private Users users;
 
-//une depense ne peut etre lie qu'a un et une seul categories
+//une depense ne peut etre lie qu'a une et une seule categorie
      @ManyToOne
     @JoinColumn(name ="id_categories",nullable = false)
     private Categories categories;
 
-    //une depense  peut avoir 0 ou plusieurs alertes
-   @OneToMany(mappedBy = "depenses", cascade = CascadeType.ALL)
-   private List<Alertes> alertes;
 
 
 }

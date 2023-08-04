@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,11 +30,12 @@ public class Alertes {
 
     private Date date_alertes;
 
-//une alerte ne peut etre lie qu'a un et une seul depense
+//une alerte ne peut etre lie qu'a un et un seul user
      @ManyToOne
-    @JoinColumn(name ="id_depenses",nullable = false)
-    private Depenses depenses;
+    @JoinColumn(name ="id_users",nullable = false)
+    private Users users;
 
+    
     
 
 }
