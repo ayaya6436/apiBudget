@@ -16,9 +16,15 @@ public class UsersServiceImpl implements UsersService {
 
     // creation
     @Override
-    public Users creer(Users users) {
-        return usersRepository.save(users);
+    public String creer(Users users) {
+        Users nouvelUtilisateur = usersRepository.save(users);
+        if (nouvelUtilisateur != null) {
+            return "Utilisateur créé avec succès";
+        } else {
+            return "Erreur lors de la création de l'utilisateur.";
+        }
     }
+    
 
     // avoir tout les users
     @Override

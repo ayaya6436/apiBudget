@@ -6,7 +6,7 @@ import apiBudget.apiBudget.model.Users;
 
 public interface UsersService {
       //Creation user
-      Users creer(Users users);
+      String creer(Users users);
 
       //Avoir la liste des users
       List<Users> lire();
