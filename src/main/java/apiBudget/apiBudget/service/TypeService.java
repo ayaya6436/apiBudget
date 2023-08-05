@@ -1,5 +1,7 @@
 package apiBudget.apiBudget.service;
 
-public interface TypeService {
+import apiBudget.apiBudget.model.Types;
 
+public interface TypeService {
+Types creer(Types types);
 }
