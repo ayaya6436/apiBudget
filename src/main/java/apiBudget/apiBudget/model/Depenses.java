@@ -1,6 +1,8 @@
 package apiBudget.apiBudget.model;
 
-import java.util.Date;
+import java.time.LocalDate;
+
+
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -34,11 +36,11 @@ public class Depenses {
     private String titre;
 
     private double montant;
-
     
     @JsonFormat(pattern = "dd-MM-yyyy", shape = JsonFormat.Shape.STRING)
-   
-    private Date date_depenses;
+    private LocalDate date_depenses;
+    
+
 
     @Column(length = 250)
     private String note;
