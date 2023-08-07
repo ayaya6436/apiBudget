@@ -1,6 +1,6 @@
 package apiBudget.apiBudget.repository;
 
-import apiBudget.apiBudget.model.Budgets;
+
 import apiBudget.apiBudget.model.Categories;
 import org.springframework.data.jpa.repository.JpaRepository;
 

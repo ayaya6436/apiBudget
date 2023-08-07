@@ -7,7 +7,7 @@ import apiBudget.apiBudget.model.Users;
 import apiBudget.apiBudget.repository.BudgetsRepository;
 import apiBudget.apiBudget.repository.CategoriesRepository;
 import apiBudget.apiBudget.repository.UsersRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,7 +23,6 @@ public class BudgetsPodioService {
     private BudgetsRepository budgetsRepository;
 
 
-    @Autowired
     public BudgetsPodioService(UsersRepository usersRepository, CategoriesRepository categoriesRepository, BudgetsRepository budgetsRepository) {
         this.usersRepository = usersRepository;
         this.categoriesRepository = categoriesRepository;
