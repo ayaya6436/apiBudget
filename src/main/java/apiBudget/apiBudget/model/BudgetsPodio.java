@@ -1,11 +1,5 @@
 package apiBudget.apiBudget.model;
 
-import apiBudget.apiBudget.model.Budgets;
-import apiBudget.apiBudget.model.Categories;
-import apiBudget.apiBudget.model.Users;
-import apiBudget.apiBudget.repository.BudgetsRepository;
-import apiBudget.apiBudget.repository.CategoriesRepository;
-import apiBudget.apiBudget.repository.UsersRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

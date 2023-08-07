@@ -14,6 +14,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
+
 @Service
 public class BudgetsPodioService {
     private UsersRepository usersRepository;
@@ -41,19 +43,29 @@ public class BudgetsPodioService {
         }catch (DateTimeParseException e){
             return "Veuillez saisir une date correcte";
         }
-        //Ici on verifie qu'on est dans un delai de un mois dans le passe ou dans le futur
+        //Ici on verifie qu'on est dans un delai de un mois dans le passe
         //Pour cela on convertit LocalDate en LocalDateTime ensuite pour pouvoir faire des operation arithimetique sur la date
         LocalDateTime datepassetime = dateToday.atStartOfDay().minusMonths(1);
         LocalDate datepasse = datepassetime.toLocalDate();
 
-        LocalDateTime datefuturtime = dateToday.atStartOfDay().plusMonths(1);
-        LocalDate datefutur = datefuturtime.toLocalDate();
+        //LocalDateTime datefuturtime = dateToday.atStartOfDay().plusMonths(1);
+        //LocalDate datefutur = datefuturtime.toLocalDate();
 
-        if (datepasse.isBefore(date) && datefutur.isAfter(date) ){
+        if (datepasse.isBefore(date) && dateToday.isAfter(date) || date.equals(dateToday)){
+
             Budgets budgets = new Budgets();
             //determinons la date de fin
             LocalDateTime datefintime = date.atStartOfDay().plusMonths(1);
             LocalDate datefin = datefintime.toLocalDate();
+
+            LocalDateTime datelimit = dateToday.atStartOfDay();
+
+            Long joursRestant = ChronoUnit.DAYS.between(datelimit, datefintime);
+            String warning = "";
+            if (joursRestant <= 10){
+                warning = "Il ne vous reste que "+joursRestant+" jours avant la fin du budget";
+            }
+
             //on a defini les date debut et de fin
             budgets.setDate_debut(date);
             budgets.setDate_fin(datefin);
@@ -69,7 +81,7 @@ public class BudgetsPodioService {
                     if (categories!=null){
                         budgets.setCategories(categories);
                         budgetsRepository.save(budgets);
-                        return "Budget defini avec succes";
+                        return  "Budget defini avec succes\n"+warning;
                     }else {
                         return "Desole cette categorie n'existe pas";
                     }

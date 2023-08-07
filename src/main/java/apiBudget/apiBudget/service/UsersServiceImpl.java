@@ -16,9 +16,15 @@ public class UsersServiceImpl implements UsersService {
 
     // creation
     @Override
-    public Users creer(Users users) {
-        return usersRepository.save(users);
+    public String creer(Users users) {
+        Users nouvelUtilisateur = usersRepository.save(users);
+        if (nouvelUtilisateur != null) {
+            return "Utilisateur créé avec succès";
+        } else {
+            return "Erreur lors de la création de l'utilisateur.";
+        }
     }
+    
 
     // avoir tout les users
     @Override
@@ -28,29 +34,34 @@ public class UsersServiceImpl implements UsersService {
     // avoir un user par id
 
     @Override
-    public Users lire(Long id_users) {
-        return usersRepository.findById(id_users).orElse(null);
+    public Users lire(Long id) {
+        return usersRepository.findById(id).orElse(null);
     }
 
-    // modifier une quiz par id_user
+    // modifier un user par id
 
     @Override
-    public Users modifier(Long id_users, Users users) {
-        return usersRepository.findById(id_users)
+    public Users modifier(Long id, Users users) {
+        return usersRepository.findById(id)
                 .map(u -> {
                     u.setNom(users.getNom());
                     u.setPrenom(users.getPrenom());
                     u.setEmail(users.getEmail());
                     u.setPassword(users.getPassword());
                     return usersRepository.save(u);
-                }).orElseThrow(() -> new RuntimeException("User non trouve avec l'ID:" + id_users));
+                }).orElseThrow(() -> new RuntimeException("User non trouve avec l'ID:" + id));
     }
 
-    // supprimer une quiz par id_user
+    // supprimer une user par id_user
 
     @Override
-    public String supprimer(Long id_users) {
-        usersRepository.deleteById(id_users);
-        return "user supprimer avec succes";
+    public String supprimer(Long id) {
+       Users nouvelUtilisateur = usersRepository.findById(id).orElseThrow(() -> new RuntimeException("User non trouve avec l'ID:" + id));
+        if (nouvelUtilisateur != null) {
+            usersRepository.deleteById(id);
+            return "Utilisateur supprimer avec succès";
+        } else {
+            return "L'utilisateur n'existe pas.";
+        }
     }
 }

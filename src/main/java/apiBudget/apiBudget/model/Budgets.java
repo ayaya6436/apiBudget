@@ -24,9 +24,10 @@ import lombok.Setter;
 public class Budgets {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_budgets;
+    private Long id;
     private LocalDate date_debut;
     private LocalDate date_fin;
+
     private double montant;
 
 //un budget ne peut etre lie qu'a un et un seul user
