@@ -22,7 +22,7 @@ import lombok.Setter;
 public class Types {
      @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_types;
+    private Long id;
 
     @Column(length = 250)
     private String libelle;

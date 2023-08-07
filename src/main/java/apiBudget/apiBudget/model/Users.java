@@ -2,6 +2,8 @@ package apiBudget.apiBudget.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,10 +21,11 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
+@JsonIgnoreProperties({ "depenses", "budgets" })
 public class Users {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
-   private Long id_users;
+   private Long id;
 
    @Column(length=50)
    private String nom;

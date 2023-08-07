@@ -1,6 +1,6 @@
 package apiBudget.apiBudget.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -24,8 +24,10 @@ import lombok.Setter;
 public class Budgets {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_budgets;
-    private Date periode;
+    private Long id;
+    private LocalDate date_debut;
+    private LocalDate date_fin;
+
     private double montant;
 
 //un budget ne peut etre lie qu'a un et un seul user
