@@ -13,11 +13,11 @@ public interface DepensesService {
       List<Depenses> lire();
      
       //avoir une depense par id_user
-      Depenses lire(Long id_users);
+      Depenses lire(Long id);
   
       //Modifier les depenses
-      Depenses modifier(Long id_depenses,Depenses depenses);
+      Depenses modifier(Long id,Depenses depenses);
   
       //Supprimer les depenses
-      String supprimer(Long id_depenses);
+      String supprimer(Long id);
 }

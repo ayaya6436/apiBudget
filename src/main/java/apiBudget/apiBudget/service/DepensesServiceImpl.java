@@ -49,25 +49,25 @@ public class DepensesServiceImpl implements DepensesService {
     }
 
     @Override
-    public Depenses lire(Long id_depenses) {
-        return depensesRepository.findById(id_depenses).orElse(null);
+    public Depenses lire(Long id) {
+        return depensesRepository.findById(id).orElse(null);
     }
 
     @Override
-    public Depenses modifier(Long id_depenses, Depenses depenses) {
-        return depensesRepository.findById(id_depenses)
+    public Depenses modifier(Long id, Depenses depenses) {
+        return depensesRepository.findById(id)
                 .map(d -> {
                     d.setTitre(depenses.getTitre());
                     d.setMontant(depenses.getMontant());
                     d.setDate_depenses(depenses.getDate_depenses());
                     d.setNote(depenses.getNote());
                     return depensesRepository.save(d);
-                }).orElseThrow(() -> new RuntimeException("User non trouve avec l'ID:" + id_depenses));
+                }).orElseThrow(() -> new RuntimeException("User non trouve avec l'ID:" + id));
     }
 
     @Override
-    public String supprimer(Long id_depenses) {
-        depensesRepository.deleteById(id_depenses);
+    public String supprimer(Long id) {
+        depensesRepository.deleteById(id);
         return "depenses supprimer avec succes";
     }
 

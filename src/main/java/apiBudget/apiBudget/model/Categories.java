@@ -22,7 +22,7 @@ import lombok.Setter;
 public class Categories {
     @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
-   private Long id_categories;
+   private Long id;
 
    @Column(length=50)
    private String nom;

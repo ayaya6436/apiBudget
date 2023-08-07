@@ -23,7 +23,7 @@ import lombok.Setter;
 public class Alertes {
      @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_alertes;
+    private Long id;
 
     @Column(length = 250)
     private String description;

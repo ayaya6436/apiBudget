@@ -12,11 +12,11 @@ public interface UsersService {
       List<Users> lire();
      
       //avoir un use par id_user
-      Users lire(Long id_users);
+      Users lire(Long id);
   
       //Modifier les users
-      Users modifier(Long id_users,Users users);
+      Users modifier(Long id,Users users);
   
       //Supprimer les users
-      String supprimer(Long id_users);
+      String supprimer(Long id);
 }

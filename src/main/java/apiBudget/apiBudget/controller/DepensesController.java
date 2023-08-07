@@ -35,16 +35,16 @@ public class DepensesController {
         return depensesService.lire();
     }
 
-    @GetMapping("/depenses/{id_depenses}")
+    @GetMapping("/depenses/{id}")
     public Depenses read(@PathVariable Long id_depenses){
         return depensesService.lire(id_depenses);
     } 
-      @PatchMapping("/depenses/{id_depenses}")
+      @PatchMapping("/depenses/{id}")
     public Depenses update(@PathVariable Long id_depenses, @RequestBody Depenses depenses){
         return depensesService.modifier(id_depenses, depenses);
     }
 
-       @DeleteMapping("/depenses/{id_depenses}")
+       @DeleteMapping("/depenses/{id}")
     public String delete(@PathVariable Long id_depenses){
         return depensesService.supprimer(id_depenses);
     }

@@ -34,17 +34,17 @@ public class UsersController {
         return usersService.lire();
     }
 
-    @GetMapping("/users/{id_users}")
-    public Users read(@PathVariable Long id_users){
-        return usersService.lire(id_users);
+    @GetMapping("/users/{id}")
+    public Users read(@PathVariable Long id){
+        return usersService.lire(id);
     } 
-      @PatchMapping("/users/{id_users}")
-    public Users update(@PathVariable Long id_users, @RequestBody Users users){
-        return usersService.modifier(id_users, users);
+      @PatchMapping("/users/{id}")
+    public Users update(@PathVariable Long id, @RequestBody Users users){
+        return usersService.modifier(id, users);
     }
 
-       @DeleteMapping("/users/{id_users}")
-    public String delete(@PathVariable Long id_users){
-        return usersService.supprimer(id_users);
+       @DeleteMapping("/users/{id}")
+    public String delete(@PathVariable Long id){
+        return usersService.supprimer(id);
     }
 }

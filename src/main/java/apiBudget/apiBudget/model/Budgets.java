@@ -24,7 +24,7 @@ import lombok.Setter;
 public class Budgets {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_budgets;
+    private Long id;
     private Date periode;
     private double montant;
 
