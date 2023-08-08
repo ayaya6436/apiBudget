@@ -36,6 +36,7 @@ public class ApplicationControllerAdvice {
         return new ErrorEntity(errorMessage);
     }
 
+
     // runtime exception
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler({RuntimeException.class})

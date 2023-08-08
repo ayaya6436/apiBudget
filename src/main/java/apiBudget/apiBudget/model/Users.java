@@ -40,12 +40,15 @@ public class Users {
    private String password;
 
    //un user peut effectuer 0 ou plusieurs depenses
+   
    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    
    private List<Depenses> depenses;
 
 
    //un user peut definir 1 ou plusieurs budget
    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    
    private List<Budgets> budgets;
 
    

@@ -7,9 +7,9 @@ import apiBudget.apiBudget.service.BudgetsPodioService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Objects;
 
-@RequestMapping("budgets")
+
+@RequestMapping("/budgets")
 @AllArgsConstructor
 @RestController
 public class BudgetController {

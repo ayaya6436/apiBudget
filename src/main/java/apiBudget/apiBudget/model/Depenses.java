@@ -5,7 +5,8 @@ import java.time.LocalDate;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,7 +27,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-@JsonIgnoreProperties({ "users", "types","budgets" })
+
 public class Depenses {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,20 +47,24 @@ public class Depenses {
     private String note;
 
 //une depense ne peut etre lie qu'a un et un seul user
-    @ManyToOne
-    @JoinColumn(name ="id_users",nullable = true)
-    private Users users;
+@ManyToOne
+@JoinColumn(name = "id_users", nullable = true)
+@JsonIgnore
+private Users users;
 
 //une depense ne peut etre lie qu'a une et une seule categorie
-     @ManyToOne
-    @JoinColumn(name ="id_types",nullable = true)
-    private Types types;
+
+@ManyToOne
+@JoinColumn(name = "id_types", nullable = true)
+@JsonIgnore
+private Types types;
 
 
 //une depense est deduite d'une et une seule budget
-     @ManyToOne
-    @JoinColumn(name ="id_budgets",nullable = true)
-    private Budgets budgets;
+@ManyToOne
+@JoinColumn(name = "id_budgets", nullable = true)
+@JsonIgnore
+private Budgets budgets;
 
 
 
