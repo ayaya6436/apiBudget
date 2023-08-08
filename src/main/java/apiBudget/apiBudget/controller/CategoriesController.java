@@ -30,7 +30,7 @@ public class CategoriesController {
 
     @GetMapping("/read/{id}")
     @Operation(summary = "Afficher une catégorie grace à son ID")
-    public Categories read(@PathVariable Long id,@Valid @RequestBody Categories categories){
+    public Categories read(@Valid @PathVariable Long id ){
         return categoriesService.getCategorieById(id);
     }
 

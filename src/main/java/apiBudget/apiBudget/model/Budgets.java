@@ -3,6 +3,7 @@ package apiBudget.apiBudget.model;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -38,6 +39,7 @@ public class Budgets {
 //une categorie ne peut etre lie qu'a un et un seul budget
     @ManyToOne()
     @JoinColumn(name = "id_categories",nullable = false)
+    @JsonIgnore
     private Categories categories;
 
       //un budget peut effectuer 0 ou plusieurs depenses

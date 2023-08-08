@@ -1,4 +1,6 @@
 package apiBudget.apiBudget.controller.advice;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -8,6 +10,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.time.format.DateTimeParseException;
 
 import apiBudget.apiBudget.dto.ErrorEntity;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 
 @ControllerAdvice
 public class ApplicationControllerAdvice {
@@ -30,5 +34,51 @@ public class ApplicationControllerAdvice {
         }
 
         return new ErrorEntity(errorMessage);
+    }
+
+    // runtime exception
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler({RuntimeException.class})
+    public @ResponseBody ErrorEntity handleRuntimeException(RuntimeException exception){
+        String errorMessage = exception.getMessage();
+
+        // Vérifier si l'erreur est due à un jour invalide
+        if (errorMessage.contains("Catégorie non trouvé !")) {
+            errorMessage = "Catégorie non trouvé !";
+        }
+        return new ErrorEntity( exception.getMessage());
+    }
+
+    // Not Found Exception
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({EntityNotFoundException.class})
+    public @ResponseBody ErrorEntity handleException(EntityNotFoundException exception){
+        String errorMessage = exception.getMessage();
+        return new ErrorEntity(exception.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(HttpServerErrorException.InternalServerError.class)
+    public @Valid
+    @ResponseBody ErrorEntity handleHttpServerErrorException(HttpServerErrorException e){
+    return new ErrorEntity(e.getMessage());
+    }
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(HttpClientErrorException.NotFound.class)
+    public @Valid
+    @ResponseBody ErrorEntity handleHttpClientErrorException(HttpClientErrorException e) {
+        // Log the error
+        //logger.error(e);
+
+        // Return a 404 Not Found response with a custom message
+        return new  ErrorEntity(e.getMessage());
+    }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+
+
+    @ExceptionHandler({Exception.class})
+    public@Valid
+    @ResponseBody ErrorEntity handleAllException(Exception exception){
+        return new ErrorEntity(exception.getMessage());
     }
 }

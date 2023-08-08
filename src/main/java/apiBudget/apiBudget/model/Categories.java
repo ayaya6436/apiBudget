@@ -2,6 +2,8 @@ package apiBudget.apiBudget.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,11 +26,12 @@ public class Categories {
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
 
-   @Column(length=50)
+   @Column(length=50, unique = true)
    private String nom;
 
 
    //une categorie peut appartenir 0 ou plusieurs budgets
    @OneToMany(mappedBy = "categories", cascade = CascadeType.ALL)
+   @JsonIgnore
    private List<Budgets> budgets;
 }
