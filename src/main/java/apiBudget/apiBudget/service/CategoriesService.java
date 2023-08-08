@@ -11,6 +11,6 @@ public interface CategoriesService {
     //Utilisateur supprimer(Long id, Utilisateur utilisateur);
 
 
-    Categories modifier(Long id, Categories categories);
+    String modifier(Long id, Categories categories);
     String supprimer(Long id);
 }

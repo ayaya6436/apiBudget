@@ -38,7 +38,7 @@ public class CategoriesController {
     @Operation(summary = "Récupère une catégorie grâce à son ID à condition que celui-ci soit en stock!")
     @PutMapping("/update/{id}")
     //@ApiOperation("Modifier un utilisateur par son ID")
-    public Categories update(@PathVariable Long id,@Valid @RequestBody Categories categories){
+    public String update(@PathVariable Long id,@Valid @RequestBody Categories categories){
         return categoriesService.modifier(id, categories);
     }
     // LA METHODE DELETE

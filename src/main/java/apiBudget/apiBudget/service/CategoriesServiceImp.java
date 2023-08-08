@@ -32,7 +32,15 @@ public class CategoriesServiceImp implements CategoriesService{
 
     @Override
     public List<Categories> Lire() {
-        return categoriesRepository.findAll();
+        List<Categories> categoriesList = categoriesRepository.findAll();
+
+        if (categoriesList.isEmpty()) {
+            System.out.println("La liste est vide.");
+        }
+
+        return categoriesList;
+
+
     }
 
     @Override
@@ -41,14 +49,28 @@ public class CategoriesServiceImp implements CategoriesService{
     }
 
     @Override
-    public Categories modifier(Long id, Categories categories) {
-        return categoriesRepository.findById(id).map(cat ->{
+    public String modifier(Long id, Categories categories) {
+        Categories cat1 = categoriesRepository.getByNom(categories.getNom());
+        Categories cat2 = categoriesRepository.findById(id).orElseThrow(()-> new RuntimeException("Catégorie non trouvé !"));
+        if(cat1 != null && cat2 != null){
+             categoriesRepository.findById(id).map(cat ->{
 
-            cat.setNom(categories.getNom());
-            cat.setBudgets(categories.getBudgets());
+                cat.setNom(categories.getNom());
+                cat.setBudgets(categories.getBudgets());
 
-            return categoriesRepository.save(cat);
-        }).orElseThrow(()-> new RuntimeException("Catégorie non trouvé !"));
+                categoriesRepository.save(cat);
+                return " Catégorie modifier avec succès ! ";
+            }).orElseThrow(()-> new RuntimeException("Catégorie non trouvé !"));
+        }else if (cat1 == null) {
+            return "Cette catégorie existe déjà !";
+
+        } else if (cat2 == null) {
+            return "Cette catégorie n'existe pas !";
+
+        }
+        return null;
+
+
     }
 
     @Override
