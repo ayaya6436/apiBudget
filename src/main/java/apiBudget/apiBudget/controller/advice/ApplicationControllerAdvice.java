@@ -31,4 +31,7 @@ public class ApplicationControllerAdvice {
 
         return new ErrorEntity(errorMessage);
     }
+
+
+    
 }

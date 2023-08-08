@@ -36,16 +36,16 @@ public class DepensesController {
     }
 
     @GetMapping("/depenses/{id}")
-    public Depenses read(@PathVariable Long id_depenses){
-        return depensesService.lire(id_depenses);
+    public Depenses read(@PathVariable Long id){
+        return depensesService.lire(id);
     } 
       @PatchMapping("/depenses/{id}")
-    public Depenses update(@PathVariable Long id_depenses, @RequestBody Depenses depenses){
-        return depensesService.modifier(id_depenses, depenses);
+    public Depenses update(@PathVariable Long id, @RequestBody Depenses depenses){
+        return depensesService.modifier(id, depenses);
     }
 
        @DeleteMapping("/depenses/{id}")
-    public String delete(@PathVariable Long id_depenses){
-        return depensesService.supprimer(id_depenses);
+    public String delete(@PathVariable Long id){
+        return depensesService.supprimer(id);
     }
 }

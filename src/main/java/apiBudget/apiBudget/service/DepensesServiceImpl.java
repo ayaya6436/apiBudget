@@ -5,8 +5,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import apiBudget.apiBudget.model.Budgets;
 import apiBudget.apiBudget.model.Depenses;
-
+import apiBudget.apiBudget.repository.BudgetsRepository;
 import apiBudget.apiBudget.repository.DepensesRepository;
 
 import lombok.AllArgsConstructor;
@@ -15,19 +16,34 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class DepensesServiceImpl implements DepensesService {
 
-    // injection de UsersRepository
+    // Injection du référentiel DepensesRepository
     private final DepensesRepository depensesRepository;
+    private final BudgetsRepository budgetsRepository; // Injection du référentiel Budgets
 
-    // creation
+    // Création
     @Override
     public String creer(Depenses depenses) {
+
         // Vérification de la date avant la création de la dépense
         if (isValidDate(depenses.getDate_depenses())) {
-            Depenses nouvelDepenses = depensesRepository.save(depenses);
-            if (nouvelDepenses != null) {
-                return "Depenses créé avec succès";
+                    // Vérification du montant du budget
+
+            Budgets budget = budgetsRepository.findById(depenses.getBudgets().getId()).orElse(null);
+            if (budget != null) {
+                double totalDepenses = budget.getDepenses().stream().mapToDouble(Depenses::getMontant).sum();
+                double montantRestant = budget.getMontant() - totalDepenses;
+                if (depenses.getMontant() > montantRestant) {
+                    return "Le montant de la dépense dépasse le montant restant du budget:"+ montantRestant + "FCFA";
+                }
+
+                Depenses nouvelDepenses = depensesRepository.save(depenses);
+                if (nouvelDepenses != null) {
+                    return "Dépenses créée avec succès. ResteBudget ="+ montantRestant + "FCFA";
+                } else {
+                    return "Erreur lors de la création des Dépenses.";
+                }
             } else {
-                return "Erreur lors de la création de Depenses.";
+                return "Budget non trouvé. Veuillez spécifier un budget valide pour la dépense.";
             }
         } else {
             return "Date de dépenses invalide. Le jour ne doit pas dépasser 30 et le mois ne doit pas dépasser 12.";

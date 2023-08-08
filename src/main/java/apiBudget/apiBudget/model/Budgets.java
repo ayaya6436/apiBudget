@@ -31,6 +31,7 @@ public class Budgets {
     private double montant;
 
 //un budget ne peut etre lie qu'a un et un seul user
+
     @ManyToOne()
     @JoinColumn(name = "id_users",nullable = false)
     private Users users;
@@ -41,6 +42,7 @@ public class Budgets {
     private Categories categories;
 
       //un budget peut effectuer 0 ou plusieurs depenses
+      
    @OneToMany(mappedBy = "budgets", cascade = CascadeType.ALL)
    private List<Depenses> depenses;
 
