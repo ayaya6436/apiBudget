@@ -4,6 +4,8 @@ import apiBudget.apiBudget.model.Types;
 import apiBudget.apiBudget.repository.TypeRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 
 public class TypeServiceImp implements TypeService{
@@ -20,8 +22,8 @@ public class TypeServiceImp implements TypeService{
     }
 
     @Override
-    public Types lire(Long id_type) {
-        return  typeRepository.findById(id_type).orElse(null);
+    public List<Types> lire() {
+        return  typeRepository.findAll();
     }
 
     @Override
@@ -29,4 +31,5 @@ public class TypeServiceImp implements TypeService{
         typeRepository.deleteById(id_type);
         return "Vos données ont été surpprimé avec Succès";
     }
+
 }

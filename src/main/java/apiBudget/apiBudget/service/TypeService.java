@@ -2,8 +2,10 @@ package apiBudget.apiBudget.service;
 
 import apiBudget.apiBudget.model.Types;
 
+import java.util.List;
+
 public interface TypeService {
-    Types lire(Long id_type);
+    List <Types>  lire();
 
     String supprimer(Long id_type);
 
