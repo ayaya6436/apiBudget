@@ -1,5 +1,6 @@
 package apiBudget.apiBudget.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -21,34 +22,47 @@ public class DepensesServiceImpl implements DepensesService {
     private final BudgetsRepository budgetsRepository; // Injection du référentiel Budgets
 
     // Création
-    @Override
     public String creer(Depenses depenses) {
-
-        // Vérification de la date avant la création de la dépense
-        if (isValidDate(depenses.getDate_depenses())) {
-                    // Vérification du montant du budget
-
-            Budgets budget = budgetsRepository.findById(depenses.getBudgets().getId()).orElse(null);
-            if (budget != null) {
-                double totalDepenses = budget.getDepenses().stream().mapToDouble(Depenses::getMontant).sum();
-                double montantRestant = budget.getMontant() - totalDepenses;
-                if (depenses.getMontant() > montantRestant) {
-                    return "Le montant de la dépense dépasse le montant restant du budget:"+ montantRestant + "FCFA";
-                }
-
-                Depenses nouvelDepenses = depensesRepository.save(depenses);
-                if (nouvelDepenses != null) {
-                    return "Dépenses créée avec succès. ResteBudget ="+ montantRestant + "FCFA";
-                } else {
-                    return "Erreur lors de la création des Dépenses.";
-                }
-            } else {
-                return "Budget non trouvé. Veuillez spécifier un budget valide pour la dépense.";
-            }
-        } else {
+        if (!isValidDate(depenses.getDate_depenses())) {
             return "Date de dépenses invalide. Le jour ne doit pas dépasser 30 et le mois ne doit pas dépasser 12.";
         }
+
+        Budgets budget = budgetsRepository.findById(depenses.getBudgets().getId()).orElse(null);
+        if (budget == null) {
+            return "Budget non trouvé. Veuillez spécifier un budget valide pour la dépense.";
+        }
+
+        BigDecimal totalDepenses = budget.getDepenses()
+                .stream()
+                .map(Depenses::getMontant)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal montantRestant = BigDecimal.valueOf(budget.getMontant()).subtract(totalDepenses);
+
+        if (depenses.getMontant().compareTo(montantRestant) > 0) {
+            return "Le montant de la dépense dépasse le montant restant du budget: " + montantRestant + " FCFA";
+        }
+
+        montantRestant = montantRestant.subtract(depenses.getMontant());
+
+        // Ajouter la nouvelle dépense à la liste des dépenses du budget
+        
+
+        try {
+            budgetsRepository.save(budget);
+
+            // Mise à jour de montantRestant après avoir inséré la première dépense
+            Depenses nouvelDepenses = depensesRepository.save(depenses);
+            if (nouvelDepenses != null) {
+                return "Dépense créée avec succès. ResteBudget =" + montantRestant + " FCFA";
+            } else {
+                return "Erreur lors de la création des Dépenses.";
+            }
+        } catch (Exception e) {
+            return "Une erreur est survenue lors de la création de la dépense : " + e.getMessage();
+        }
     }
+    
 
     // Méthode pour vérifier si la date est valide
     private boolean isValidDate(LocalDate date) {

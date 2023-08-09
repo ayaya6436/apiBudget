@@ -3,6 +3,8 @@ package apiBudget.apiBudget.model;
 import java.time.LocalDate;
 import java.util.List;
 
+
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -44,6 +46,8 @@ public class Budgets {
       //un budget peut effectuer 0 ou plusieurs depenses
       
    @OneToMany(mappedBy = "budgets", cascade = CascadeType.ALL)
+    
+
    private List<Depenses> depenses;
 
    //un budget  peut avoir 0 ou plusieurs alertes

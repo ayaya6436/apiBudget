@@ -2,6 +2,8 @@ package apiBudget.apiBudget.model;
 
 import java.util.List;
 
+
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,5 +32,7 @@ public class Types {
 
    //un type peut etre lie a 1 ou plusieurs depenses
    @OneToMany(mappedBy = "types", cascade = CascadeType.ALL)
+
+
    private List<Depenses> depenses;
 }
