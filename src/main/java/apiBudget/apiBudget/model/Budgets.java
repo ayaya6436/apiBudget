@@ -3,7 +3,9 @@ package apiBudget.apiBudget.model;
 import java.time.LocalDate;
 import java.util.List;
 
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -36,6 +38,7 @@ public class Budgets {
 
     @ManyToOne()
     @JoinColumn(name = "id_users",nullable = false)
+    @JsonBackReference
     private Users users;
 
 //une categorie ne peut etre lie qu'a un et un seul budget
@@ -46,8 +49,6 @@ public class Budgets {
       //un budget peut effectuer 0 ou plusieurs depenses
       
    @OneToMany(mappedBy = "budgets", cascade = CascadeType.ALL)
-    
-
    private List<Depenses> depenses;
 
    //un budget  peut avoir 0 ou plusieurs alertes
