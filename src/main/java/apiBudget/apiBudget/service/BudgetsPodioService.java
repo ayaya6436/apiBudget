@@ -110,9 +110,28 @@ public class BudgetsPodioService {
             //Mois courant
             list = budgetsRepository.findAllByUsers_IdAndFinAfterOrFinEquals(id,LocalDate.now(),LocalDate.now());
         } else if (choix == 2) {
-            list = budgetsRepository.findAllByUsers_Id(id);
+            //Mois passe
+            //on verifie qu'il n'y a pas de budget courant
+            if (budgetsRepository.findAllByUsers_IdAndFinAfterOrFinEquals(id,LocalDate.now(),LocalDate.now()).isEmpty()){
+                //Ca veut dire qu'il nya pas de mois courant
+                Budgets budget = budgetsRepository.findFirstTop1ByUsers_IdOrderByFinDesc(id);
+                if (budget==null){
+                    return "Il n'y a pas de mois passe";
+                }
+                list = budgetsRepository.findAllByFinAndUsers_Id(budget.getFin(),id);
+
+            }else {
+                //un mois courant existe
+                List<Budgets> lists = budgetsRepository.findAllByUsers_IdOrderByFinDesc(id);
+                if (lists.size()>1){
+                    //ca veut dire qu'il ya un mois passe en plus du mois courant
+                    list = budgetsRepository.findAllByFinAndUsers_Id(lists.get(1).getFin(),id);
+                }else {
+                    return "Il n'y a pas de mois passe ";
+                }
+            }
         }else {
-            list = budgetsRepository.findAllByUsers_Id(id);
+            list = budgetsRepository.findAllByUsers_IdOrderByFinDesc(id);
         }
         for (Budgets budget: list) {
             BudgetsAffichage budgetsAffichage = new BudgetsAffichage();

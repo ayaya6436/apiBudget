@@ -1,8 +1,10 @@
 package apiBudget.apiBudget.service;
 
 import apiBudget.apiBudget.model.Budgets;
+import apiBudget.apiBudget.model.Categories;
 import apiBudget.apiBudget.model.Depenses;
 import apiBudget.apiBudget.repository.BudgetsRepository;
+import apiBudget.apiBudget.repository.CategoriesRepository;
 import apiBudget.apiBudget.repository.DepensesRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +16,12 @@ public class BudgetServiceImpl implements BudgetService{
     private BudgetsRepository budgetsRepository;
     private DepensesRepository depensesRepository;
 
-    public BudgetServiceImpl(BudgetsRepository budgetsRepository, DepensesRepository depensesRepository) {
+    private CategoriesRepository categoriesRepository;
+
+    public BudgetServiceImpl(BudgetsRepository budgetsRepository,CategoriesRepository categoriesRepository, DepensesRepository depensesRepository) {
         this.budgetsRepository = budgetsRepository;
         this.depensesRepository = depensesRepository;
+        this.categoriesRepository = categoriesRepository;
     }
 
     //private CategoriesRepository categoriesRepository;
@@ -69,4 +74,6 @@ public class BudgetServiceImpl implements BudgetService{
         }
         return total;
     }
+
+
 }
