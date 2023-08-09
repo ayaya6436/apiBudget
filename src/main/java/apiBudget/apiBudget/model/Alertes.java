@@ -3,9 +3,7 @@ package apiBudget.apiBudget.model;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
