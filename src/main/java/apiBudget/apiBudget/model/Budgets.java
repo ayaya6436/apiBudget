@@ -50,6 +50,8 @@ public class Budgets {
       //un budget peut effectuer 0 ou plusieurs depenses
       
    @OneToMany(mappedBy = "budgets", cascade = CascadeType.ALL)
+   @JsonIgnore
+
    private List<Depenses> depenses;
 
    //un budget  peut avoir 0 ou plusieurs alertes

@@ -2,7 +2,7 @@ package apiBudget.apiBudget.model;
 
 import java.util.List;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -51,7 +51,7 @@ public class Users {
 
    //un user peut definir 1 ou plusieurs budget
    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
-   @JsonManagedReference
+   @JsonIgnore
    private List<Budgets> budgets;
 
    

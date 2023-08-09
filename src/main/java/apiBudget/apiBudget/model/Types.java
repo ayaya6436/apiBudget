@@ -39,10 +39,8 @@ public class Types {
 
    //un type peut etre lie a 1 ou plusieurs depenses
    @OneToMany(mappedBy = "types", cascade = CascadeType.ALL)
-
    @JsonIgnore
-  
-
+   
    private List<Depenses> depenses;
 
     public Types() {
