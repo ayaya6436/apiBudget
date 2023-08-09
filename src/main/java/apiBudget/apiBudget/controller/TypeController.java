@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @Data
+@Valid
 @RequestMapping("/Type")
 public class TypeController {
    private final TypeService typeService;

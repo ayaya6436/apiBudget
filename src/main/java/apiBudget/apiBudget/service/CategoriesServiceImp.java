@@ -17,17 +17,28 @@ public class CategoriesServiceImp implements CategoriesService{
 
     @Override
     public String creer(Categories categories) {
-        Categories cat1 = categoriesRepository.getByNom(categories.getNom());
-        if(cat1 == null){
-            categoriesRepository.save(categories);
-            return "Catégorie creer avec succès !";
 
-        } else if (cat1 != null) {
-            return "Cette catégorie existe déjà !";
+        try {
+            //  Block of code to try
+            Categories cat1 = categoriesRepository.getByNom(categories.getNom());
+            if(cat1 == null && categories.getNom() != null && categories.getNom() != "" && categories.getNom() != " "){
+                categoriesRepository.save(categories);
+                return "Catégorie creer avec succès !";
+
+            } else if (cat1 != null) {
+                return "Cette catégorie existe déjà !";
+
+            } else if (categories.getNom() == null || categories.getNom() == "" || categories.getNom() == " ") {
+
+                return "Le nom né doit pas être vide ou null";
+            }
 
         }
-        return null;
-
+        catch(RuntimeException e) {
+            //  Block of code to handle errors
+            return "message: "+e;
+        }
+        return "Cette catégorie existe déjà !";
     }
 
     @Override
@@ -62,7 +73,7 @@ public class CategoriesServiceImp implements CategoriesService{
                 return " Catégorie modifier avec succès ! ";
             }).orElseThrow(()-> new RuntimeException("Catégorie non trouvé !"));
         }else if (cat1 == null) {
-            return "Cette catégorie existe déjà !";
+             return "Cette catégorie existe déjà !";
 
         } else if (cat2 == null) {
             return "Cette catégorie n'existe pas !";

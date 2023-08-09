@@ -1,25 +1,29 @@
 package apiBudget.apiBudget.controller.advice;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.format.DateTimeParseException;
+import java.util.Date;
 
 import apiBudget.apiBudget.dto.ErrorEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.context.request.WebRequest;
 
-@ControllerAdvice
+import javax.management.BadAttributeValueExpException;
+
+@RestControllerAdvice
 public class ApplicationControllerAdvice {
 
     // Gestionnaire pour DateTimeParseException 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({ DateTimeParseException.class })
-    public @ResponseBody ErrorEntity handleDateTimeParseException(DateTimeParseException exception) {
+    public @ResponseBody @Valid ErrorEntity handleDateTimeParseException(DateTimeParseException exception) {
         String errorMessage = exception.getMessage();
 
         // Vérifier si l'erreur est due à un jour invalide
@@ -40,7 +44,7 @@ public class ApplicationControllerAdvice {
     // runtime exception
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler({RuntimeException.class})
-    public @ResponseBody ErrorEntity handleRuntimeException(RuntimeException exception){
+    public @ResponseBody @Valid ErrorEntity handleRuntimeException(RuntimeException exception){
         String errorMessage = exception.getMessage();
 
         // Vérifier si l'erreur est due à un jour invalide
@@ -53,7 +57,7 @@ public class ApplicationControllerAdvice {
     // Not Found Exception
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({EntityNotFoundException.class})
-    public @ResponseBody ErrorEntity handleException(EntityNotFoundException exception){
+    public @ResponseBody @Valid ErrorEntity handleException(EntityNotFoundException exception){
         String errorMessage = exception.getMessage();
         return new ErrorEntity(exception.getMessage());
     }
@@ -75,11 +79,20 @@ public class ApplicationControllerAdvice {
         return new  ErrorEntity(e.getMessage());
     }
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-
-
     @ExceptionHandler({Exception.class})
     public@Valid
     @ResponseBody ErrorEntity handleAllException(Exception exception){
         return new ErrorEntity(exception.getMessage());
+    }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ErrorEntity handleMethodArgumentNotValidException(MethodArgumentNotValidException exception, WebRequest request){
+        final  String[] msg = {""};
+        exception.getBindingResult().getAllErrors().forEach((error)-> {
+            msg[0] += "'"+((FieldError) error).getField()+"' : "+error.getDefaultMessage()+", ";
+        });
+        return new ErrorEntity(
+                msg[0]
+        );
     }
 }
