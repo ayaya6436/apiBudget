@@ -3,6 +3,7 @@ package apiBudget.apiBudget.model;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -42,13 +43,14 @@ public class Users {
    //un user peut effectuer 0 ou plusieurs depenses
    
    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
-    
+   @JsonManagedReference
+
    private List<Depenses> depenses;
 
 
    //un user peut definir 1 ou plusieurs budget
    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
-    
+   @JsonManagedReference
    private List<Budgets> budgets;
 
    

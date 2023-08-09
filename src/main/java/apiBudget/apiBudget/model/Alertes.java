@@ -2,6 +2,9 @@ package apiBudget.apiBudget.model;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,6 +36,7 @@ public class Alertes {
 //une alerte ne peut etre lie qu'a un et un seul budget
      @ManyToOne
     @JoinColumn(name ="id_budgets",nullable = false)
+     @JsonBackReference
     private Budgets budgets;
 
     

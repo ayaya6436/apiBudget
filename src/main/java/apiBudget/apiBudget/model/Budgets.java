@@ -4,6 +4,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,6 +39,7 @@ public class Budgets {
 
     @ManyToOne()
     @JoinColumn(name = "id_users",nullable = false)
+    @JsonBackReference
     private Users users;
 
 //une categorie ne peut etre lie qu'a un et un seul budget
