@@ -1,15 +1,22 @@
 package apiBudget.apiBudget.service;
 
 import apiBudget.apiBudget.model.Budgets;
+import apiBudget.apiBudget.model.Depenses;
 import apiBudget.apiBudget.repository.BudgetsRepository;
+import apiBudget.apiBudget.repository.DepensesRepository;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class BudgetServiceImpl implements BudgetService{
     private BudgetsRepository budgetsRepository;
+    private DepensesRepository depensesRepository;
 
-    public BudgetServiceImpl(BudgetsRepository budgetsRepository) {
+    public BudgetServiceImpl(BudgetsRepository budgetsRepository, DepensesRepository depensesRepository) {
         this.budgetsRepository = budgetsRepository;
+        this.depensesRepository = depensesRepository;
     }
 
     //private CategoriesRepository categoriesRepository;
@@ -29,7 +36,7 @@ public class BudgetServiceImpl implements BudgetService{
         return budgetsRepository.findById(id)
                 .map(test->{
                     test.setMontant(budgets.getMontant());
-                    test.setDate_debut(budgets.getDate_debut());
+                    test.setDebut(budgets.getDebut());
                     //test.setCategories(categoriesRepository.findById(budgets.getCategories().getId_categories()));
                     budgetsRepository.save(budgets);
                     return "Votre budget a ete modifie avec succes";
@@ -40,5 +47,26 @@ public class BudgetServiceImpl implements BudgetService{
     public String supprimer(Long id) {
         budgetsRepository.deleteById(id);
         return "Vous avez supprimer cet budgets";
+    }
+
+    @Override
+    //on verifie qu'il nya pas de bubget active par rapport a une date du user
+    public  Boolean Notactive(LocalDate date, Long id1,Long id2) {
+        List<Budgets> list = budgetsRepository.findAllByFinAfterAndUsers_IdAndCategories_Id(date,id1,id2);
+        if (list.isEmpty()){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    @Override
+    public double depense_total(Long id) {
+        List<Depenses> list = depensesRepository.findAllByBudgets_Id(id);
+        double total = 0;
+        for (Depenses depense : list ) {
+            total = total + depense.getMontant();
+        }
+        return total;
     }
 }

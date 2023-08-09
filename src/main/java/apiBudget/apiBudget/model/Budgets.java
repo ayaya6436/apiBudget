@@ -25,8 +25,8 @@ public class Budgets {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDate date_debut;
-    private LocalDate date_fin;
+    private LocalDate debut;
+    private LocalDate fin;
 
     private double montant;
 
