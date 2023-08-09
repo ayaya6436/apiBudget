@@ -3,10 +3,13 @@ package apiBudget.apiBudget.service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import apiBudget.apiBudget.model.Budgets;
+
 import apiBudget.apiBudget.model.Depenses;
 import apiBudget.apiBudget.repository.BudgetsRepository;
 import apiBudget.apiBudget.repository.DepensesRepository;
@@ -74,31 +77,51 @@ public class DepensesServiceImpl implements DepensesService {
 
     @Override
     public List<Depenses> lire() {
-        return depensesRepository.findAll();
+        List<Depenses> depensesList = depensesRepository.findAll();
+
+        if (depensesList.isEmpty()) {
+            System.out.println("La liste est vide.");
+        }
+
+        return depensesList;
 
     }
 
     @Override
     public Depenses lire(Long id) {
-        return depensesRepository.findById(id).orElse(null);
+        return depensesRepository.findById(id).orElseThrow(()-> new RuntimeException("depenses non trouvé !"));
     }
 
     @Override
-    public Depenses modifier(Long id, Depenses depenses) {
-        return depensesRepository.findById(id)
-                .map(d -> {
-                    d.setTitre(depenses.getTitre());
-                    d.setMontant(depenses.getMontant());
-                    d.setDate_depenses(depenses.getDate_depenses());
-                    d.setNote(depenses.getNote());
-                    return depensesRepository.save(d);
-                }).orElseThrow(() -> new RuntimeException("User non trouve avec l'ID:" + id));
+   public String modifier(Long id, Depenses depenses) {
+    Optional<Depenses> existingDepense = depensesRepository.findById(id);
+
+    if (existingDepense.isPresent()) {
+        Depenses d = existingDepense.get();
+        d.setTitre(depenses.getTitre());
+        d.setMontant(depenses.getMontant());
+        d.setDate_depenses(depenses.getDate_depenses());
+        d.setNote(depenses.getNote());
+        depensesRepository.save(d);
+        return "Dépense modifiée avec succès";
+    } else {
+        throw new NoSuchElementException("Dépense non trouvée avec l'ID: " + id);
     }
+}
 
     @Override
     public String supprimer(Long id) {
-        depensesRepository.deleteById(id);
-        return "depenses supprimer avec succes";
-    }
+        Depenses depenses = depensesRepository.findById(id).orElseThrow(()-> new RuntimeException("Depenses non trouvé !"));
 
+        if (depenses != null ){
+            depensesRepository.deleteById(depenses.getId());
+            return "Depense supprimer avec succès !";
+        }
+        if (depenses == null){
+            return "Depense non trouvé !";
+        }
+        return null;
+    }
 }
+
+

@@ -15,7 +15,7 @@ public interface UsersService {
       Users lire(Long id);
   
       //Modifier les users
-      Users modifier(Long id,Users users);
+      String modifier(Long id,Users users);
   
       //Supprimer les users
       String supprimer(Long id);
