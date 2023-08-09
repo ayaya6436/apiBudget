@@ -1,6 +1,6 @@
 package apiBudget.apiBudget.service;
 
-import apiBudget.apiBudget.dto.ErrorEntity;
+
 import apiBudget.apiBudget.model.Types;
 import apiBudget.apiBudget.repository.TypeRepository;
 import lombok.Data;
