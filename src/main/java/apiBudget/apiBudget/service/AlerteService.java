@@ -2,7 +2,11 @@ package apiBudget.apiBudget.service;
 
 import apiBudget.apiBudget.model.Alertes;
 
+import java.util.List;
+
 public interface AlerteService {
-    Void creer(Alertes alertes);
+    List<Alertes> Lire();
+    String creer(Alertes alertes);
     String supprimer(Long id);
+
 }

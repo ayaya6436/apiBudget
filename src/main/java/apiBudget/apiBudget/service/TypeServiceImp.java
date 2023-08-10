@@ -25,10 +25,10 @@ public class TypeServiceImp implements TypeService{
             return "Type "+types.getLibelle()+" creer avec succès !";
 
         } else if (type1 != null) {
-            return "Un type avec "+type1.getLibelle()+" existe déjà !";
+            return "Un type avec le libeller : "+type1.getLibelle()+" existe déjà !";
 
         }
-        return "Un type avec "+type1.getLibelle()+" existe déjà !";
+        return "Un type avec le libeller : "+type1.getLibelle()+" existe déjà !";
     }
 
     @Override

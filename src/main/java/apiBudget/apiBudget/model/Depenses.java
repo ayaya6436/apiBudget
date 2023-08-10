@@ -62,21 +62,34 @@ public class Depenses {
 
     // une depense ne peut etre lie qu'a un et un seul user
     @ManyToOne
+<<<<<<< HEAD
     @JoinColumn(name = "id_users", nullable = false)
     
+=======
+    @JoinColumn(name = "id_users", nullable = true)
+>>>>>>> f9fbef5efb56e7871418ffef11628620621405e4
     private Users users;
 
     // une depense ne peut etre lie qu'a une et une seule categorie
 
     @ManyToOne
+<<<<<<< HEAD
     @JoinColumn(name = "id_types", nullable = false)
    
+=======
+    @JoinColumn(name = "id_types", nullable = true)
+
+>>>>>>> f9fbef5efb56e7871418ffef11628620621405e4
     private apiBudget.apiBudget.model.Types types;
     
     // une depense est deduite d'une et une seule budget
     @ManyToOne
+<<<<<<< HEAD
     @JoinColumn(name = "id_budgets", nullable = false)
    
+=======
+    @JoinColumn(name = "id_budgets", nullable = true)
+>>>>>>> f9fbef5efb56e7871418ffef11628620621405e4
     private Budgets budgets;
 
 }
