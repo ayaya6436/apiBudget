@@ -113,18 +113,24 @@ public class BudgetsPodioService {
         } else if (choix == 2) {
             //Essayons d'obtenir une liste des budget passe
             //Obtenons d'abord la liste des categorie disponible
-            List<Categories> categoriesList = budgetsRepository.findDistinctByUsers_Id(id);
+            List<Long> categoriesList = budgetsRepository.findDistinctByUsers_Id(id);
 
             //Maintenant obtenons le dernier budget defini pour chaque categorie
 
-            for (Categories categorie: categoriesList ) {
-                List<Budgets> results  = budgetsRepository.findDistinctFinByUsers_IdAAndCAndCategories_IdOrderByFinDesc(id,categorie.getId());
+            for (Long categorie: categoriesList ) {
+                List<Budgets> results  = budgetsRepository.findDistinctFinByUsers_IdAndCategories_IdOrderByFinDesc(id,categorie);
                 if (results.size()==1){
                     //Ca veut dire qu'un budget defini pour cette categorie donc verifions que ce n'est pas un mois courant
-
+                    if (!budgetService.Incurrentbudget(results.get(0).getFin(),id,categorie)){
+                        list.add(results.get(0));
+                    }
                 } else if (results.size()>=2) {
                     //ca veut dire qu'on a deux date
-
+                    if (!budgetService.Incurrentbudget(results.get(0).getFin(),id,categorie)){
+                        list.add(results.get(0));
+                    }else {
+                        list.add(results.get(1));
+                    }
                 }
             }
 
@@ -166,5 +172,7 @@ public class BudgetsPodioService {
         }
         return affichageList;
     }
+
+
 }
 

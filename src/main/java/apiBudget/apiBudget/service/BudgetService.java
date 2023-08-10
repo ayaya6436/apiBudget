@@ -12,5 +12,5 @@ public interface BudgetService {
     String supprimer(Long id);
     Boolean Notactive(LocalDate date, Long id1,Long id2);
     double depense_total(Long id);
-
+    Boolean Incurrentbudget(LocalDate date,Long id_user,Long id_categorie);
 }
