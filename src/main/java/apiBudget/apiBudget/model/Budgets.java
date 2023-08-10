@@ -1,5 +1,6 @@
 package apiBudget.apiBudget.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class Budgets {
     private LocalDate date_fin;
 
     private double montant;
+    private BigDecimal montantRestant;
 
 //un budget ne peut etre lie qu'a un et un seul user
 
