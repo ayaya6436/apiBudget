@@ -2,8 +2,13 @@ package apiBudget.apiBudget.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import apiBudget.apiBudget.model.Alertes;
+import apiBudget.apiBudget.model.EmailDetails;
+import apiBudget.apiBudget.repository.EmailService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import apiBudget.apiBudget.model.Budgets;
@@ -20,6 +25,8 @@ public class DepensesServiceImpl implements DepensesService {
     // Injection du référentiel DepensesRepository
     private final DepensesRepository depensesRepository;
     private final BudgetsRepository budgetsRepository; // Injection du référentiel Budgets
+    private EmailServiceImpl emailServiceIplm;
+    private AlerteService alerteService;
 
     // Création
     public String creer(Depenses depenses) {
@@ -53,7 +60,23 @@ public class DepensesServiceImpl implements DepensesService {
 
             // Mise à jour de montantRestant après avoir inséré la première dépense
             Depenses nouvelDepenses = depensesRepository.save(depenses);
+
             if (nouvelDepenses != null) {
+                String msg = "Votre Budget est de " +budget.getMontant()+ " FCFA pour une depense en "+depenses.getTitre()+
+                        "et votre montant restant est " + montantRestant;
+                EmailDetails details = new EmailDetails(budget.getUsers().getEmail(), msg, "Details du depense");
+                emailServiceIplm.sendSimpleMail(details);
+                LocalDate dateToday = LocalDate.now();
+
+                Alertes alertes = new Alertes();
+                alertes.setDate_alertes(dateToday);
+                alertes.setDescription(msg);
+                alertes.setBudgets(budget);
+                alerteService.creer(alertes);
+
+
+
+
                 return "Dépense créée avec succès. ResteBudget =" + montantRestant + " FCFA";
             } else {
                 return "Erreur lors de la création des Dépenses.";

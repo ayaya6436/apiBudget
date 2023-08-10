@@ -1,13 +1,11 @@
 package apiBudget.apiBudget.service;
 
-import apiBudget.apiBudget.model.Budgets;
-import apiBudget.apiBudget.model.BudgetsPodio;
-import apiBudget.apiBudget.model.Categories;
-import apiBudget.apiBudget.model.Users;
+import apiBudget.apiBudget.model.*;
 import apiBudget.apiBudget.repository.BudgetsRepository;
 import apiBudget.apiBudget.repository.CategoriesRepository;
 import apiBudget.apiBudget.repository.UsersRepository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,6 +19,11 @@ public class BudgetsPodioService {
     private UsersRepository usersRepository;
     private CategoriesRepository categoriesRepository;
     private BudgetsRepository budgetsRepository;
+
+    @Autowired
+    private AlerteService alerteService;
+    @Autowired
+    private EmailServiceImpl emailServiceIplm;
 
 
     public BudgetsPodioService(UsersRepository usersRepository, CategoriesRepository categoriesRepository, BudgetsRepository budgetsRepository) {
@@ -80,6 +83,18 @@ public class BudgetsPodioService {
                     if (categories!=null){
                         budgets.setCategories(categories);
                         budgetsRepository.save(budgets);
+                        //Alert
+                        String msg = "Votre Budget a été defini avec " +budgets.getMontant()+ " FCFA \n"+warning;
+                        EmailDetails details = new EmailDetails(budgets.getUsers().getEmail(), msg, "Details du Budget");
+                        emailServiceIplm.sendSimpleMail(details);
+
+
+                        Alertes alertes = new Alertes();
+                        alertes.setDate_alertes(dateToday);
+                        alertes.setDescription(msg);
+                        alertes.setBudgets(budgets);
+                        alerteService.creer(alertes);
+                        //Fin d'alert
                         return  "Budget defini avec succes\n"+warning;
                     }else {
                         return "Desole cette categorie n'existe pas";

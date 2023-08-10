@@ -46,20 +46,18 @@ public class Depenses {
     // une depense ne peut etre lie qu'a un et un seul user
     @ManyToOne
     @JoinColumn(name = "id_users", nullable = true)
-     @JsonBackReference
     private Users users;
 
     // une depense ne peut etre lie qu'a une et une seule categorie
 
     @ManyToOne
     @JoinColumn(name = "id_types", nullable = true)
-    @JsonBackReference
+
     private apiBudget.apiBudget.model.Types types;
     
     // une depense est deduite d'une et une seule budget
     @ManyToOne
     @JoinColumn(name = "id_budgets", nullable = true)
-    @JsonBackReference
     private Budgets budgets;
 
 }

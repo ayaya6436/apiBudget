@@ -1,10 +1,16 @@
 package apiBudget.apiBudget.service;
 
-import apiBudget.apiBudget.model.Alertes;
+import apiBudget.apiBudget.model.*;
 import apiBudget.apiBudget.repository.AlertesRepository;
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
+@Data
 public class AlerteServiceImpl implements AlerteService {
     private AlertesRepository alertesRepository;
 
@@ -13,15 +19,27 @@ public class AlerteServiceImpl implements AlerteService {
     }
 
     @Override
-    public Void creer(Alertes alertes) {
-        alertesRepository.save(alertes);
+    public List<Alertes> Lire() {
+        return alertesRepository.findAll();
+    }
 
-        return null;
+    @Override
+    public String creer(Alertes alertes) {
+         alertesRepository.save(alertes);
+         return "Alert Envoyer avec succès !";
     }
 
     @Override
     public String supprimer(Long id) {
-        alertesRepository.deleteById(id);
-        return "Donnee supprimer avec succes";
+        Alertes alertes = alertesRepository.findById(id).orElseThrow(()-> new RuntimeException("Alert non trouvé !"));
+
+        if (alertes != null ){
+            alertesRepository.deleteById(alertes.getId());
+            return "Alert supprimer avec succès !";
+        }
+        if (alertes == null){
+            return "Utilisateur non trouvé !";
+        }
+        return null;
     }
 }

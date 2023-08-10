@@ -1,5 +1,6 @@
 package apiBudget.apiBudget.model;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -14,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 import jakarta.persistence.Table;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +25,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
+@Data
 public class Alertes {
      @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,12 +34,12 @@ public class Alertes {
     @Column(length = 250)
     private String description;
 
-    private Date date_alertes;
+    private LocalDate date_alertes;
 
 //une alerte ne peut etre lie qu'a un et un seul budget
-     @ManyToOne
+    @ManyToOne
     @JoinColumn(name ="id_budgets",nullable = false)
-     @JsonBackReference
+    @JsonBackReference
     private Budgets budgets;
 
     
