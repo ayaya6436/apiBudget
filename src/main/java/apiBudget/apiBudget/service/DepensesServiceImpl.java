@@ -136,18 +136,33 @@ public class DepensesServiceImpl implements DepensesService {
     }
     
     @Override
-    public String supprimer(Long id) {
-        Depenses depenses = depensesRepository.findById(id).orElseThrow(()-> new RuntimeException("Depenses non trouvé !"));
+public String supprimer(Long id) {
+    Optional<Depenses> existingDepense = depensesRepository.findById(id);
 
-        if (depenses != null ){
-            depensesRepository.deleteById(depenses.getId());
-            return "Depense supprimer avec succès !";
-        }
-        if (depenses == null){
-            return "Depense non trouvé !";
-        }
-        return null;
+    if (existingDepense.isPresent()) {
+        Depenses depense = existingDepense.get();
+        Budgets budget = depense.getBudgets();
+
+        // Récupérer le montant de la dépense à supprimer
+        BigDecimal montantDepense = depense.getMontant();
+
+        // Ajouter le montant de la dépense au montant restant du budget
+        BigDecimal montantRestantBudget = budget.getMontantRestant();
+        BigDecimal nouveauMontantRestant = montantRestantBudget.add(montantDepense);
+
+        // Mettre à jour le montant restant du budget dans la base de données
+        budget.setMontantRestant(nouveauMontantRestant);
+        budgetsRepository.save(budget);
+
+        // Supprimer la dépense
+        depensesRepository.deleteById(id);
+
+        return "Dépense supprimée avec succès. Montant restant du budget : " + nouveauMontantRestant + " FCFA";
+    } else {
+        throw new NoSuchElementException("Dépense non trouvée avec l'ID: " + id);
     }
+}
+
 }
 
 
