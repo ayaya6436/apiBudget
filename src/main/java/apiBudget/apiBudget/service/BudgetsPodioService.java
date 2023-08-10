@@ -14,6 +14,7 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class BudgetsPodioService {
@@ -110,26 +111,24 @@ public class BudgetsPodioService {
             //Mois courant
             list = budgetsRepository.findAllByUsers_IdAndFinAfterOrFinEquals(id,LocalDate.now(),LocalDate.now());
         } else if (choix == 2) {
-            //Mois passe
-            //on verifie qu'il n'y a pas de budget courant
-            if (budgetsRepository.findAllByUsers_IdAndFinAfterOrFinEquals(id,LocalDate.now(),LocalDate.now()).isEmpty()){
-                //Ca veut dire qu'il nya pas de mois courant
-                Budgets budget = budgetsRepository.findFirstTop1ByUsers_IdOrderByFinDesc(id);
-                if (budget==null){
-                    return "Il n'y a pas de mois passe";
-                }
-                list = budgetsRepository.findAllByFinAndUsers_Id(budget.getFin(),id);
+            //Essayons d'obtenir une liste des budget passe
+            //Obtenons d'abord la liste des categorie disponible
+            List<Categories> categoriesList = budgetsRepository.findDistinctByUsers_Id(id);
 
-            }else {
-                //un mois courant existe
-                List<Budgets> lists = budgetsRepository.findAllByUsers_IdOrderByFinDesc(id);
-                if (lists.size()>1){
-                    //ca veut dire qu'il ya un mois passe en plus du mois courant
-                    list = budgetsRepository.findAllByFinAndUsers_Id(lists.get(1).getFin(),id);
-                }else {
-                    return "Il n'y a pas de mois passe ";
+            //Maintenant obtenons le dernier budget defini pour chaque categorie
+
+            for (Categories categorie: categoriesList ) {
+                List<Budgets> results  = budgetsRepository.findDistinctFinByUsers_IdAAndCAndCategories_IdOrderByFinDesc(id,categorie.getId());
+                if (results.size()==1){
+                    //Ca veut dire qu'un budget defini pour cette categorie donc verifions que ce n'est pas un mois courant
+
+                } else if (results.size()>=2) {
+                    //ca veut dire qu'on a deux date
+
                 }
             }
+
+
         }else {
             list = budgetsRepository.findAllByUsers_IdOrderByFinDesc(id);
         }
