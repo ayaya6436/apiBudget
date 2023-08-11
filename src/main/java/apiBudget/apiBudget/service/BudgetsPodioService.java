@@ -125,7 +125,7 @@ public class BudgetsPodioService {
                         list.add(results.get(0));
                     }
                 } else if (results.size()>=2) {
-                    //ca veut dire qu'on a deux date
+                    //ca veut dire qu'on au moins deux date
                     if (!budgetService.Incurrentbudget(results.get(0).getFin(),id,categorie)){
                         list.add(results.get(0));
                     }else {
