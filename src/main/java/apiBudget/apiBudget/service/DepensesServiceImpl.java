@@ -55,9 +55,9 @@ public class DepensesServiceImpl implements DepensesService {
 
         montantRestant = montantRestant.subtract(depenses.getMontant());
  // Mise à jour du montant restant du budget
- budget.setMontantRestant(montantRestant);
- budgetsRepository.save(budget); // Sauvegarde de la mise à jour dans la base de données
-        
+        budget.setMontantRestant(montantRestant);
+        budgetsRepository.save(budget); // Sauvegarde de la mise à jour dans la base de données
+                
 
         try {
             budgetsRepository.save(budget);
