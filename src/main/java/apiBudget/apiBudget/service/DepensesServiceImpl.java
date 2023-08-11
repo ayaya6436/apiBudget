@@ -2,15 +2,14 @@ package apiBudget.apiBudget.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import apiBudget.apiBudget.model.Alertes;
 import apiBudget.apiBudget.model.EmailDetails;
-import apiBudget.apiBudget.repository.EmailService;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import apiBudget.apiBudget.model.Budgets;
@@ -33,10 +32,10 @@ public class DepensesServiceImpl implements DepensesService {
 
     // Création
     public String creer(Depenses depenses) {
-        if (!isValidDate(depenses.getDate_depenses())) {
-            return "Date de dépenses invalide. Le jour ne doit pas dépasser 30 et le mois ne doit pas dépasser 12.";
+        //verification de la date
+        if (!Valid.dates(depenses.getDate_depenses())) {
+            return "Veuillez saisir une date correcte";
         }
-
         Budgets budget = budgetsRepository.findById(depenses.getBudgets().getId()).orElse(null);
         if (budget == null) {
             return "Budget non trouvé. Veuillez spécifier un budget valide pour la dépense.";
@@ -91,13 +90,7 @@ public class DepensesServiceImpl implements DepensesService {
     }
     
 
-    // Méthode pour vérifier si la date est valide
-    private boolean isValidDate(LocalDate date) {
-        int day = date.getDayOfMonth();
-        int month = date.getMonthValue();
-
-        return day <= 30 && month <= 12;
-    }
+   
 
     @Override
     public List<Depenses> lire() {

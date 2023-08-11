@@ -51,7 +51,7 @@ public class Depenses {
     private BigDecimal montant;
 
     @JsonFormat(pattern = "dd-MM-yyyy", shape = JsonFormat.Shape.STRING)
-    private LocalDate date_depenses;
+    private String date_depenses;
 
    @Column(length=50, nullable = false)
    @NotBlank(message = "La note ne doit pas être vide !")
