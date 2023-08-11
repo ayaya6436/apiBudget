@@ -40,9 +40,9 @@ public class BudgetsPodioService {
         if (budgetsPodio.getDate_debut()==null){
             return "La date doit etre saisi";
         }
-        try {
+        if (Valid.dates(budgetsPodio.getDate_debut())){
             date = LocalDate.parse(budgetsPodio.getDate_debut(),formatter);
-        }catch (DateTimeParseException e){
+        }else {
             return "Veuillez saisir une date correcte";
         }
         //Ici on verifie qu'on est dans un delai de un mois dans le passe
