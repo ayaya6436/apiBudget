@@ -23,14 +23,19 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class DepensesServiceImpl implements DepensesService {
+
+
     @Autowired
     // Injection du référentiel DepensesRepository
     private final DepensesRepository depensesRepository;
     private final BudgetsRepository budgetsRepository; // Injection du référentiel Budgets
     private EmailServiceImpl emailServiceIplm;
     private AlerteService alerteService;
-    private BudgetService budgetService;
-    private EmailService emailService;
+    private AlerteServiceImpl alertSimp;
+    private AlertConditService alertConditService;
+
+
+
 
     // Création
     public String creer(Depenses depenses) {
@@ -82,6 +87,12 @@ public class DepensesServiceImpl implements DepensesService {
                 //Mes Alertes
                 BigDecimal budgetAmount = budget.getMontant();
                 BigDecimal budgetAmountBigDecimal = budgetAmount;
+                // Réinitialisez alertSent à false à chaque vérification de budget
+
+
+
+
+
 
                 //BigDecimal montantRestant1 = budgetAmountBigDecimal.subtract(montantRestant);
                 // Vérification de réduction de budget
@@ -98,18 +109,22 @@ public class DepensesServiceImpl implements DepensesService {
 
 
                 }
-                else if (montantRestant.compareTo(ninetyPercent) <= 0){
+                else if (montantRestant.compareTo(ninetyPercent) <= 0 && !alertSimp.isAlertSent1()){
                     // block of code to be executed if the condition1 is false and condition2 is true
                     createBudgetAlert(budget, montantRestant, 10);
+                    alertSimp.setAlertSent1(true);
+
 
 
                 }
-               else if (montantRestant.compareTo(seventyPercent) <= 0) {
+               else if (montantRestant.compareTo(seventyPercent) <= 0 && !alertSimp.isAlertSent2()) {
                     // block of code to be executed if the condition1 is false and condition2 is true
                     createBudgetAlert(budget, montantRestant, 35);
+                    alertSimp.setAlertSent2(true);
 
-                }  else if (montantRestant.compareTo(fiftyPercent) <= 0) {
+                }  else if (montantRestant.compareTo(fiftyPercent) <= 0 && !alertSimp.isAlertSent3()) {
                     createBudgetAlert(budget, montantRestant, 50);
+                    alertSimp.setAlertSent3(true);
                 }
 
 
