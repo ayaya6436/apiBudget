@@ -31,6 +31,7 @@ public class BudgetController {
     }
     @PatchMapping("")
     public Object modifier(@RequestParam Long id,@RequestBody Budgets budgets){
-        return budgetService.modifier(id,budgets);
+        Long idu= 0L;
+        return budgetService.modifier(id,idu,budgets);
     }
 }

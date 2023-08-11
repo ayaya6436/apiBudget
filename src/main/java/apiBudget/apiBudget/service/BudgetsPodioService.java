@@ -7,16 +7,12 @@ import apiBudget.apiBudget.repository.UsersRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class BudgetsPodioService {
@@ -61,7 +57,7 @@ public class BudgetsPodioService {
         //Verifions que la date est en accord avec le budget precedent s'il existe
 
         if (budgetService.Notactive(date,budgetsPodio.getId_users(),budgetsPodio.getId_categories())){
-        if (datepasse.isBefore(date) && dateToday.isAfter(date) || date.equals(dateToday)){
+        if (datepasse.isBefore(date) && (dateToday.minusMonths(1).plusYears(1).isAfter(date))||dateToday.minusMonths(1).plusYears(1).isEqual(date)){
             Budgets budgets = new Budgets();
             //determinons la date de fin
             LocalDateTime datefintime = date.atStartOfDay().plusMonths(1);
@@ -127,7 +123,8 @@ public class BudgetsPodioService {
         List<Budgets> list = new ArrayList<>();
         if (choix==1){
             //Mois courant
-            list = budgetsRepository.findAllByUsers_IdAndFinAfterOrFinEquals(id,LocalDate.now(),LocalDate.now());
+            LocalDate localDate = LocalDate.now();
+            list = budgetsRepository.findAllBycurrentbudget(localDate,id);
         } else if (choix == 2) {
             //Essayons d'obtenir une liste des budget passe
             //Obtenons d'abord la liste des categorie disponible

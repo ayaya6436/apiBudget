@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public interface BudgetService {
     String creer(Budgets budgets);
     Budgets lire(Long id);
-    String modifier(Long id,Budgets budgets);
+    String modifier(Long idbudget,Long iduser,Budgets budgets);
     String supprimer(Long id);
     void checkBudgetStatus(Budgets budgets, BigDecimal montantRestant);
     Boolean Notactive(LocalDate date, Long id1,Long id2);
