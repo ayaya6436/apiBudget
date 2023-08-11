@@ -3,7 +3,7 @@ package apiBudget.apiBudget.model;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,12 +14,9 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "types")
@@ -39,7 +36,7 @@ public class Types {
    //un type peut etre lie a 1 ou plusieurs depenses
    @OneToMany(mappedBy = "types", cascade = CascadeType.ALL)
    @JsonIgnore
-   @JsonManagedReference
+   
    private List<Depenses> depenses;
 
     public Types() {

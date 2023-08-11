@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import apiBudget.apiBudget.model.Alertes;
 import apiBudget.apiBudget.model.EmailDetails;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import apiBudget.apiBudget.model.Budgets;
+
 import apiBudget.apiBudget.model.Depenses;
 import apiBudget.apiBudget.repository.BudgetsRepository;
 import apiBudget.apiBudget.repository.DepensesRepository;
@@ -47,12 +50,13 @@ public class DepensesServiceImpl implements DepensesService {
         BigDecimal montantRestant = BigDecimal.valueOf(budget.getMontant()).subtract(totalDepenses);
 
         if (depenses.getMontant().compareTo(montantRestant) > 0) {
-            return "Le montant de la dépense dépasse le montant restant du budget: " + montantRestant + " FCFA";
+            return "Le montant de la dépense dépasse le montant  du budget: " + budget.getMontant() + " FCFA";
         }
 
         montantRestant = montantRestant.subtract(depenses.getMontant());
-
-        // Ajouter la nouvelle dépense à la liste des dépenses du budget
+ // Mise à jour du montant restant du budget
+ budget.setMontantRestant(montantRestant);
+ budgetsRepository.save(budget); // Sauvegarde de la mise à jour dans la base de données
         
 
         try {
@@ -97,31 +101,76 @@ public class DepensesServiceImpl implements DepensesService {
 
     @Override
     public List<Depenses> lire() {
-        return depensesRepository.findAll();
+        List<Depenses> depensesList = depensesRepository.findAll();
+
+        if (depensesList.isEmpty()) {
+            System.out.println("La liste est vide.");
+        }
+
+        return depensesList;
 
     }
 
     @Override
     public Depenses lire(Long id) {
-        return depensesRepository.findById(id).orElse(null);
+        return depensesRepository.findById(id).orElseThrow(()-> new RuntimeException("depenses non trouvé !"));
     }
-
     @Override
-    public Depenses modifier(Long id, Depenses depenses) {
-        return depensesRepository.findById(id)
-                .map(d -> {
-                    d.setTitre(depenses.getTitre());
-                    d.setMontant(depenses.getMontant());
-                    d.setDate_depenses(depenses.getDate_depenses());
-                    d.setNote(depenses.getNote());
-                    return depensesRepository.save(d);
-                }).orElseThrow(() -> new RuntimeException("User non trouve avec l'ID:" + id));
-    }
+    public String modifier(Long id, Depenses depenses) {
+        Optional<Depenses> existingDepense = depensesRepository.findById(id);
+    
+        if (existingDepense.isPresent()) {
+            Depenses d = existingDepense.get();
+    
+            // Sauvegarde du montant initial de la dépense
+            BigDecimal montantInitialDepense = d.getMontant();
+    
+            // Calcul de la différence entre les montants initial et modifié de la dépense
+            BigDecimal differenceMontant = depenses.getMontant().subtract(montantInitialDepense);
+    
+            // Récupération du budget initial
+            Budgets budget = d.getBudgets();
+            BigDecimal montantRestantBudget = budget.getMontantRestant();
+    
+            // Mettre à jour le montant restant du budget en fonction de la différence
+            BigDecimal nouveauMontantRestant = montantRestantBudget.subtract(differenceMontant);
+    
+            // Vérifier les limites pour éviter un montant restant négatif
+            if (nouveauMontantRestant.compareTo(BigDecimal.ZERO) < 0) {
+              return "Le montant de la dépense dépasse le montant  du budget: " + budget.getMontant() + " FCFA";
 
+            }
+    
+            // Mise à jour de la dépense avec les nouvelles valeurs
+            d.setTitre(depenses.getTitre());
+            d.setMontant(depenses.getMontant());
+            d.setDate_depenses(depenses.getDate_depenses());
+            d.setNote(depenses.getNote());
+            depensesRepository.save(d);
+    
+            // Mise à jour du montant restant du budget dans la base
+            budget.setMontantRestant(nouveauMontantRestant);
+            budgetsRepository.save(budget);
+    
+            return "Dépense modifiée avec succès. Montant restant du budget : " + nouveauMontantRestant + " FCFA";
+        } else {
+            throw new NoSuchElementException("Dépense non trouvée avec l'ID: " + id);
+        }
+    }
+    
     @Override
     public String supprimer(Long id) {
-        depensesRepository.deleteById(id);
-        return "depenses supprimer avec succes";
-    }
+        Depenses depenses = depensesRepository.findById(id).orElseThrow(()-> new RuntimeException("Depenses non trouvé !"));
 
+        if (depenses != null ){
+            depensesRepository.deleteById(depenses.getId());
+            return "Depense supprimer avec succès !";
+        }
+        if (depenses == null){
+            return "Depense non trouvé !";
+        }
+        return null;
+    }
 }
+
+

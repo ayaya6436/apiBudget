@@ -1,8 +1,11 @@
 package apiBudget.apiBudget.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+
 
 import apiBudget.apiBudget.model.Users;
 import apiBudget.apiBudget.repository.UsersRepository;
@@ -29,27 +32,40 @@ public class UsersServiceImpl implements UsersService {
     // avoir tout les users
     @Override
     public List<Users> lire() {
-        return usersRepository.findAll();
+         List<Users> usersList = usersRepository.findAll();
+
+        if (usersList.isEmpty()) {
+            System.out.println("La liste est vide.");
+        }
+
+        return usersList;
     }
     // avoir un user par id
 
     @Override
     public Users lire(Long id) {
-        return usersRepository.findById(id).orElse(null);
+        return usersRepository.findById(id).orElseThrow(()->new RuntimeException("Utilisateur non trouve"));
     }
 
     // modifier un user par id
 
     @Override
-    public Users modifier(Long id, Users users) {
-        return usersRepository.findById(id)
-                .map(u -> {
+    public String modifier(Long id, Users users) {
+            Optional<Users> existingUsers = usersRepository.findById(id);
+
+            if(existingUsers.isPresent()) {
+                Users u = existingUsers.get();
                     u.setNom(users.getNom());
                     u.setPrenom(users.getPrenom());
                     u.setEmail(users.getEmail());
                     u.setPassword(users.getPassword());
-                    return usersRepository.save(u);
-                }).orElseThrow(() -> new RuntimeException("User non trouve avec l'ID:" + id));
+                    usersRepository.save(u);
+                    return "User modifiée avec succès";
+            }else {
+        throw new NoSuchElementException("User non trouvée avec l'ID: " + id);
+    }
+        
+               
     }
 
     // supprimer une user par id_user

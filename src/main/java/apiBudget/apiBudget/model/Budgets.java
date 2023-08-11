@@ -1,11 +1,11 @@
 package apiBudget.apiBudget.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
 
 
 import jakarta.persistence.CascadeType;
@@ -37,6 +37,7 @@ public class Budgets {
     private LocalDate date_fin;
 
     private double montant;
+    private BigDecimal montantRestant;
 
 //un budget ne peut etre lie qu'a un et un seul user
 
@@ -54,6 +55,8 @@ public class Budgets {
       //un budget peut effectuer 0 ou plusieurs depenses
       
    @OneToMany(mappedBy = "budgets", cascade = CascadeType.ALL)
+   @JsonIgnore
+
    private List<Depenses> depenses;
 
    //un budget  peut avoir 0 ou plusieurs alertes

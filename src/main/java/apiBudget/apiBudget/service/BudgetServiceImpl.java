@@ -2,19 +2,28 @@ package apiBudget.apiBudget.service;
 
 import apiBudget.apiBudget.model.Budgets;
 import apiBudget.apiBudget.repository.BudgetsRepository;
+
+import java.math.BigDecimal;
+
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@Data
 public class BudgetServiceImpl implements BudgetService{
+    @Autowired
     private BudgetsRepository budgetsRepository;
 
     public BudgetServiceImpl(BudgetsRepository budgetsRepository) {
+        
         this.budgetsRepository = budgetsRepository;
     }
 
     //private CategoriesRepository categoriesRepository;
     @Override
     public String creer(Budgets budgets) {
+        budgets.setMontantRestant(BigDecimal.valueOf(budgets.getMontant())); // Initialisation du montant restant
         budgetsRepository.save(budgets);
         return "Votre budget a ete defini avec succes";
     }

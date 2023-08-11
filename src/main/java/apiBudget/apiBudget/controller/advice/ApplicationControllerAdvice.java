@@ -1,21 +1,20 @@
 package apiBudget.apiBudget.controller.advice;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.format.DateTimeParseException;
-import java.util.Date;
 
 import apiBudget.apiBudget.dto.ErrorEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.management.BadAttributeValueExpException;
+
 
 @RestControllerAdvice
 public class ApplicationControllerAdvice {
@@ -58,7 +57,7 @@ public class ApplicationControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({EntityNotFoundException.class})
     public @ResponseBody @Valid ErrorEntity handleException(EntityNotFoundException exception){
-        String errorMessage = exception.getMessage();
+        // String errorMessage = exception.getMessage();
         return new ErrorEntity(exception.getMessage());
     }
 

@@ -16,7 +16,7 @@ public interface DepensesService {
       Depenses lire(Long id);
   
       //Modifier les depenses
-      Depenses modifier(Long id,Depenses depenses);
+      String modifier(Long id,Depenses depenses);
   
       //Supprimer les depenses
       String supprimer(Long id);
