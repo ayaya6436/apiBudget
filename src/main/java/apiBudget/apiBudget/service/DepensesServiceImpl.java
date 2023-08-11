@@ -93,7 +93,7 @@ public class DepensesServiceImpl implements DepensesService {
 
                     // Vérification de montant restant égal à 0
                     createBudgetAlert(budget, montantRestant, 0);
-                    System.out.println("condition 4");
+
 
 
 
@@ -101,21 +101,17 @@ public class DepensesServiceImpl implements DepensesService {
                 else if (montantRestant.compareTo(ninetyPercent) <= 0){
                     // block of code to be executed if the condition1 is false and condition2 is true
                     createBudgetAlert(budget, montantRestant, 10);
-                    System.out.println("condition 3");
+
 
                 }
                else if (montantRestant.compareTo(seventyPercent) <= 0) {
                     // block of code to be executed if the condition1 is false and condition2 is true
                     createBudgetAlert(budget, montantRestant, 35);
-                    System.out.println("condition 2");
 
                 }  else if (montantRestant.compareTo(fiftyPercent) <= 0) {
                     createBudgetAlert(budget, montantRestant, 50);
-                    System.out.println("condition 1");
                 }
-                System.out.println("fiftyPercent: " + fiftyPercent);
-                System.out.println("seventyPercent: " + seventyPercent);
-                System.out.println("ninetyPercent: " + ninetyPercent);
+
 
                 //Mes Alertes
 
@@ -197,29 +193,37 @@ public class DepensesServiceImpl implements DepensesService {
             BigDecimal budgetAmount = budget.getMontant();
             BigDecimal budgetAmountBigDecimal = budgetAmount;
 
-            BigDecimal montantRestant1 = budgetAmountBigDecimal.subtract(nouveauMontantRestant);
+            //BigDecimal montantRestant1 = budgetAmountBigDecimal.subtract(montantRestant);
             // Vérification de réduction de budget
             BigDecimal fiftyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.5"));
-            BigDecimal seventyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.3"));
+            BigDecimal seventyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.35"));
             BigDecimal ninetyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.1"));
-
             //==================================================///
-            if (montantRestant1.compareTo(fiftyPercent) <= 0) {
-                // block of code to be executed if condition1 is true
-                createBudgetAlert(budget, nouveauMontantRestant, 50);
-            } else if (montantRestant1.compareTo(seventyPercent) <= 0) {
-                // block of code to be executed if the condition1 is false and condition2 is true
-                createBudgetAlert(budget, nouveauMontantRestant, 30);
-            } else if (montantRestant1.compareTo(ninetyPercent) <= 0){
-                // block of code to be executed if the condition1 is false and condition2 is true
-                createBudgetAlert(budget, nouveauMontantRestant, 10);
-            } else if (montantRestant1.compareTo(BigDecimal.ZERO) == 0) {
+            if (nouveauMontantRestant.compareTo(BigDecimal.ZERO) == 0) {
 
                 // Vérification de montant restant égal à 0
                 createBudgetAlert(budget, nouveauMontantRestant, 0);
 
 
+
+
             }
+            else if (nouveauMontantRestant.compareTo(ninetyPercent) <= 0){
+                // block of code to be executed if the condition1 is false and condition2 is true
+                createBudgetAlert(budget, nouveauMontantRestant, 10);
+
+
+            }
+            else if (nouveauMontantRestant.compareTo(seventyPercent) <= 0) {
+                // block of code to be executed if the condition1 is false and condition2 is true
+                createBudgetAlert(budget, nouveauMontantRestant, 35);
+
+            }  else if (nouveauMontantRestant.compareTo(fiftyPercent) <= 0) {
+                createBudgetAlert(budget, nouveauMontantRestant, 50);
+            }
+
+
+            //Mes Alertes
 
 
 
