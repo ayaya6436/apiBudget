@@ -10,6 +10,6 @@ public interface BudgetService {
     Budgets lire(Long id);
     String modifier(Long id,Budgets budgets);
     String supprimer(Long id);
-    //void checkBudgetStatus(Budgets budgets, BigDecimal montantRestant);
+    void checkBudgetStatus(Budgets budgets, BigDecimal montantRestant);
 
 }

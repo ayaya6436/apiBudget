@@ -39,7 +39,7 @@ public class Depenses {
     private Long id;
 
    
-   @Column(length=50, nullable = false, unique = true)
+   @Column(length=50, nullable = false)
    @NotBlank(message = "Le titre ne doit pas être vide !")
    @NotNull(message = "Le titre ne doit pas être null")
    @Size(min = 2 ,message = "Le titre est trop court", max = 225)

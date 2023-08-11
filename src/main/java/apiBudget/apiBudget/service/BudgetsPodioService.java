@@ -113,47 +113,8 @@ public class BudgetsPodioService {
         }
     }
     //Alert auto
-    public void checkBudgetStatus(Budgets budget, BigDecimal montantRestant) {
-        double budgetAmount = budget.getMontant();
-        BigDecimal budgetAmountBigDecimal = BigDecimal.valueOf(budgetAmount);
-
-        BigDecimal montantRestant1 = budgetAmountBigDecimal.subtract(montantRestant);
-        // Vérification de réduction de budget
-        BigDecimal fiftyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.5"));
-        BigDecimal seventyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.3"));
-        BigDecimal ninetyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.1"));
-        if (montantRestant1.compareTo(fiftyPercent) <= 0) {
-            createBudgetAlert(budget, montantRestant, 50);
-        }
-        if (montantRestant1.compareTo(seventyPercent) <= 0) {
-            createBudgetAlert(budget, montantRestant, 30);
-        }
-        if (montantRestant1.compareTo(ninetyPercent) <= 0) {
-            createBudgetAlert(budget, montantRestant, 10);
-        }
-
-        // Vérification de montant restant égal à 0
-        if (montantRestant1.compareTo(BigDecimal.ZERO) == 0) {
-            createBudgetAlert(budget, montantRestant, 0);
-        }
 
 
-
-        //findu ckeckB
-    }
-    private void createBudgetAlert(Budgets budget, BigDecimal montantRestant, int percentage) {
-        String message = "Votre budget a diminué de " + percentage + "% et votre montant restant est de " + montantRestant;
-        Alertes alertes = new Alertes();
-        alertes.setDate_alertes(LocalDate.now());
-        alertes.setDescription(message);
-        alertes.setBudgets(budget);
-        alerteService.creer(alertes);
-        //Alert
-
-        EmailDetails details = new EmailDetails(budget.getUsers().getEmail(), message, "Details du Budget");
-        emailServiceIplm.sendSimpleMail(details);
-
-    }
 }
 
 
