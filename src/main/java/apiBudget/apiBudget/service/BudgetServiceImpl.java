@@ -4,13 +4,16 @@ import apiBudget.apiBudget.model.Alertes;
 import apiBudget.apiBudget.model.Budgets;
 import apiBudget.apiBudget.model.EmailDetails;
 import apiBudget.apiBudget.repository.BudgetsRepository;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import apiBudget.apiBudget.model.Depenses;
+import apiBudget.apiBudget.repository.CategoriesRepository;
+import apiBudget.apiBudget.repository.DepensesRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Data
@@ -21,16 +24,20 @@ public class BudgetServiceImpl implements BudgetService{
     private AlerteService alerteService;
     @Autowired
     private EmailServiceImpl emailServiceIplm;
+    private DepensesRepository depensesRepository;
 
-    public BudgetServiceImpl(BudgetsRepository budgetsRepository) {
-        
+    private CategoriesRepository categoriesRepository;
+
+    public BudgetServiceImpl(BudgetsRepository budgetsRepository,CategoriesRepository categoriesRepository, DepensesRepository depensesRepository) {
         this.budgetsRepository = budgetsRepository;
+        this.depensesRepository = depensesRepository;
+        this.categoriesRepository = categoriesRepository;
     }
 
     //private CategoriesRepository categoriesRepository;
     @Override
     public String creer(Budgets budgets) {
-        budgets.setMontantRestant(BigDecimal.valueOf(budgets.getMontant())); // Initialisation du montant restant
+        budgets.setMontantRestant(budgets.getMontant()); // Initialisation du montant restant
         budgetsRepository.save(budgets);
         return "Votre budget a ete defini avec succes";
     }
@@ -45,7 +52,7 @@ public class BudgetServiceImpl implements BudgetService{
         return budgetsRepository.findById(id)
                 .map(test->{
                     test.setMontant(budgets.getMontant());
-                    test.setDate_debut(budgets.getDate_debut());
+                    test.setDebut(budgets.getDebut());
                     //test.setCategories(categoriesRepository.findById(budgets.getCategories().getId_categories()));
                     budgetsRepository.save(budgets);
                     return "Votre budget a ete modifie avec succes";
@@ -61,8 +68,8 @@ public class BudgetServiceImpl implements BudgetService{
     @Override
     public void checkBudgetStatus(Budgets budgets, BigDecimal montantRestant) {
         //Mes Alertes
-        double budgetAmount = budgets.getMontant();
-        BigDecimal budgetAmountBigDecimal = BigDecimal.valueOf(budgetAmount);
+        BigDecimal budgetAmount = budgets.getMontant();
+        BigDecimal budgetAmountBigDecimal = budgetAmount;
 
         BigDecimal montantRestant1 = budgetAmountBigDecimal.subtract(montantRestant);
         // Vérification de réduction de budget
@@ -101,5 +108,40 @@ public class BudgetServiceImpl implements BudgetService{
         EmailDetails details = new EmailDetails(budget.getUsers().getEmail(), message, "Details du Budget");
         emailServiceIplm.sendSimpleMail(details);
 
+    }
+//on verifie qu'il nya pas de bubget active par rapport a une date du user
+@Override
+    public  Boolean Notactive(LocalDate date, Long id1,Long id2) {
+        List<Budgets> list = budgetsRepository.findAllByFinAfterOrFinEqualsAndUsers_IdAndCategories_Id(date,date,id1,id2);
+        if (list.isEmpty()){
+            return true;
+        }else {
+            return false;
+        }
+    }
+    @Override
+    public BigDecimal depense_total(Long id) {
+        List<Depenses> list = depensesRepository.findAllByBudgets_Id(id);
+        BigDecimal total = BigDecimal.valueOf(0);
+        for (Depenses depense : list ) {
+            total = depense.getMontant().add(total);
+        }
+        return total;
+    }
+    @Override
+    public Boolean Incurrentbudget(LocalDate date,Long id_user, Long id_categorie){
+        LocalDate datetoday = LocalDate.now();
+        List<Budgets> budgets = budgetsRepository.findDistinctFinByUsers_IdAndCategories_IdOrderByFinDesc(id_user,id_categorie);
+        if (!budgets.isEmpty()){
+            if ((datetoday.isAfter(budgets.get(0).getDebut())||datetoday.isEqual(budgets.get(0).getDebut())) && (datetoday.isBefore(budgets.get(0).getFin()) || datetoday.isEqual(budgets.get(0).getFin()))){
+                //ca veut dire qu'il y a un budget courant pour cette categorie
+                if (date.isAfter(budgets.get(0).getDebut())||date.isEqual(budgets.get(0).getDebut()) && date.isBefore(budgets.get(0).getFin()) || date.isEqual(budgets.get(0).getFin())){
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
+        return false;
     }
 }

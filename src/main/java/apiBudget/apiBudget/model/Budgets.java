@@ -33,10 +33,10 @@ public class Budgets {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDate date_debut;
-    private LocalDate date_fin;
+    private LocalDate debut;
+    private LocalDate fin;
 
-    private double montant;
+    private BigDecimal montant;
     private BigDecimal montantRestant;
 
 //un budget ne peut etre lie qu'a un et un seul user

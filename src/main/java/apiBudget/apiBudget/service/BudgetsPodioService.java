@@ -14,12 +14,16 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class BudgetsPodioService {
     private UsersRepository usersRepository;
     private CategoriesRepository categoriesRepository;
     private BudgetsRepository budgetsRepository;
+    private BudgetService budgetService;
 
     @Autowired
     private AlerteService alerteService;
@@ -27,10 +31,11 @@ public class BudgetsPodioService {
     private EmailServiceImpl emailServiceIplm;
 
 
-    public BudgetsPodioService(UsersRepository usersRepository, CategoriesRepository categoriesRepository, BudgetsRepository budgetsRepository) {
+    public BudgetsPodioService(UsersRepository usersRepository,BudgetService budgetService, CategoriesRepository categoriesRepository, BudgetsRepository budgetsRepository) {
         this.usersRepository = usersRepository;
         this.categoriesRepository = categoriesRepository;
         this.budgetsRepository = budgetsRepository;
+        this.budgetService = budgetService;
     }
     public String creer(BudgetsPodio budgetsPodio){
         //on verifie la date
@@ -41,9 +46,9 @@ public class BudgetsPodioService {
         if (budgetsPodio.getDate_debut()==null){
             return "La date doit etre saisi";
         }
-        try {
+        if (Valid.dates(budgetsPodio.getDate_debut())){
             date = LocalDate.parse(budgetsPodio.getDate_debut(),formatter);
-        }catch (DateTimeParseException e){
+        }else {
             return "Veuillez saisir une date correcte";
         }
         //Ici on verifie qu'on est dans un delai de un mois dans le passe
@@ -53,9 +58,10 @@ public class BudgetsPodioService {
 
         //LocalDateTime datefuturtime = dateToday.atStartOfDay().plusMonths(1);
         //LocalDate datefutur = datefuturtime.toLocalDate();
+        //Verifions que la date est en accord avec le budget precedent s'il existe
 
+        if (budgetService.Notactive(date,budgetsPodio.getId_users(),budgetsPodio.getId_categories())){
         if (datepasse.isBefore(date) && dateToday.isAfter(date) || date.equals(dateToday)){
-
             Budgets budgets = new Budgets();
             //determinons la date de fin
             LocalDateTime datefintime = date.atStartOfDay().plusMonths(1);
@@ -70,15 +76,15 @@ public class BudgetsPodioService {
             }
 
             //on a defini les date debut et de fin
-            budgets.setDate_debut(date);
-            budgets.setDate_fin(datefin);
+            budgets.setDebut(date);
+            budgets.setFin(datefin);
             Users users = usersRepository.findUsersById(budgetsPodio.getId_users());
             if (users!=null){
-                if (budgetsRepository.findBudgetsByCategories_Id(budgetsPodio.getId_categories())!=null){
+                /*if (budgetsRepository.findBudgetsByCategories_Id(budgetsPodio.getId_categories())!=null){
                     return "Un budgets a ete defini pour cette categories";
-                }
+                }*/
                 budgets.setUsers(users);
-                if (budgetsPodio.getMontant()>0){
+                if (budgetsPodio.getMontant().intValue()>0){
                     budgets.setMontant(budgetsPodio.getMontant());
                     Categories categories = categoriesRepository.findCategoriesById(budgetsPodio.getId_categories());
                     if (categories!=null){
@@ -111,8 +117,79 @@ public class BudgetsPodioService {
         }else {
             return "Ce n'est pas un mois courant";
         }
+        }else {
+            return "Cette date de debut rentre dans un budget deja defini";
+        }
     }
-    //Alert auto
+
+    public Object lire(Long id,int choix){
+        List<BudgetsAffichage> affichageList = new ArrayList<>();
+        List<Budgets> list = new ArrayList<>();
+        if (choix==1){
+            //Mois courant
+            list = budgetsRepository.findAllByUsers_IdAndFinAfterOrFinEquals(id,LocalDate.now(),LocalDate.now());
+        } else if (choix == 2) {
+            //Essayons d'obtenir une liste des budget passe
+            //Obtenons d'abord la liste des categorie disponible
+            List<Long> categoriesList = budgetsRepository.findDistinctByUsers_Id(id);
+
+            //Maintenant obtenons le dernier budget defini pour chaque categorie
+
+            for (Long categorie: categoriesList ) {
+                List<Budgets> results  = budgetsRepository.findDistinctFinByUsers_IdAndCategories_IdOrderByFinDesc(id,categorie);
+                if (results.size()==1){
+                    //Ca veut dire qu'un budget defini pour cette categorie donc verifions que ce n'est pas un mois courant
+                    if (!budgetService.Incurrentbudget(results.get(0).getFin(),id,categorie)){
+                        list.add(results.get(0));
+                    }
+                } else if (results.size()>=2) {
+                    //ca veut dire qu'on au moins deux date
+                    if (!budgetService.Incurrentbudget(results.get(0).getFin(),id,categorie)){
+                        list.add(results.get(0));
+                    }else {
+                        list.add(results.get(1));
+                    }
+                }
+            }
+
+
+        }else {
+            list = budgetsRepository.findAllByUsers_IdOrderByFinDesc(id);
+        }
+        for (Budgets budget: list) {
+            BudgetsAffichage budgetsAffichage = new BudgetsAffichage();
+
+            budgetsAffichage.setId_budget(budget.getId());
+
+            budgetsAffichage.setId_categorie(budget.getCategories().getId());
+
+            budgetsAffichage.setDate_fin(budget.getFin());
+
+            budgetsAffichage.setMontant(budget.getMontant());
+
+            //Calcule du jours restant
+            int rest = (int) ChronoUnit.DAYS.between(LocalDate.now().atStartOfDay() , budget.getFin().atStartOfDay());
+            //Verifions le status
+            if (rest < 0){
+               budgetsAffichage.setStatus("Termine");
+               budgetsAffichage.setJours_restant(0);
+            }else {
+                budgetsAffichage.setStatus("En cours");
+                budgetsAffichage.setJours_restant(rest);
+            }
+
+            //Calcule du montant consomme
+            budgetsAffichage.setMontant_consommee(budgetService.depense_total(budget.getId()));
+            budgetsAffichage.setMontant_restant(budgetsAffichage.getMontant().subtract(budgetsAffichage.getMontant_consommee()));
+            affichageList.add(budgetsAffichage);
+        }
+        if (affichageList.isEmpty()&&choix==1){
+            return "Pas de budget pour le mois courant";
+        } else if (affichageList.isEmpty()&&choix==2) {
+            return "Pas de budget pour le mois passe";
+        }
+        return affichageList;
+    }
 
 
 }

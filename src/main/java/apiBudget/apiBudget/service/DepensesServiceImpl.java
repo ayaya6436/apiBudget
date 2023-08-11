@@ -2,7 +2,6 @@ package apiBudget.apiBudget.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -49,7 +48,7 @@ public class DepensesServiceImpl implements DepensesService {
                 .map(Depenses::getMontant)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal montantRestant = BigDecimal.valueOf(budget.getMontant()).subtract(totalDepenses);
+        BigDecimal montantRestant = budget.getMontant().subtract(totalDepenses);
 
         if (depenses.getMontant().compareTo(montantRestant) > 0) {
             return "Le montant de la dépense dépasse le montant  du budget: " + budget.getMontant() + " FCFA";
@@ -81,8 +80,8 @@ public class DepensesServiceImpl implements DepensesService {
                 alerteService.creer(alertes);*/
 
                 //Mes Alertes
-                double budgetAmount = budget.getMontant();
-                BigDecimal budgetAmountBigDecimal = BigDecimal.valueOf(budgetAmount);
+                BigDecimal budgetAmount = budget.getMontant();
+                BigDecimal budgetAmountBigDecimal = budgetAmount;
 
                 //BigDecimal montantRestant1 = budgetAmountBigDecimal.subtract(montantRestant);
                 // Vérification de réduction de budget
@@ -195,8 +194,8 @@ public class DepensesServiceImpl implements DepensesService {
             budgetsRepository.save(budget);
 
             //Mes Alertes
-            double budgetAmount = budget.getMontant();
-            BigDecimal budgetAmountBigDecimal = BigDecimal.valueOf(budgetAmount);
+            BigDecimal budgetAmount = budget.getMontant();
+            BigDecimal budgetAmountBigDecimal = budgetAmount;
 
             BigDecimal montantRestant1 = budgetAmountBigDecimal.subtract(nouveauMontantRestant);
             // Vérification de réduction de budget
