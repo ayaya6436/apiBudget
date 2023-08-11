@@ -150,7 +150,7 @@ public class BudgetsPodioService {
             budgetsAffichage.setMontant(budget.getMontant());
 
             //Calcule du jours restant
-            int rest = (int) ChronoUnit.DAYS.between(LocalDate.now().atTime(23,59,59) , budget.getFin().atTime(23,59,59));
+            int rest = (int) ChronoUnit.DAYS.between(LocalDate.now().atStartOfDay() , budget.getFin().atStartOfDay());
             //Verifions le status
             if (rest < 0){
                budgetsAffichage.setStatus("Termine");
