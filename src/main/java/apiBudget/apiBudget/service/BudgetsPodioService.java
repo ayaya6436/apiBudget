@@ -85,7 +85,7 @@ public class BudgetsPodioService {
                         budgets.setCategories(categories);
                         budgetsRepository.save(budgets);
                         //Alert
-                        String msg = "Votre Budget a été defini avec " +budgets.getMontant()+ " FCFA \n"+warning;
+                        String msg = "Votre Budget a été defini avec un montant de " +budgets.getMontant()+ " FCFA \n"+warning;
                         EmailDetails details = new EmailDetails(budgets.getUsers().getEmail(), msg, "Details du Budget");
                         emailServiceIplm.sendSimpleMail(details);
 

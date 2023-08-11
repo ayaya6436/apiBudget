@@ -60,6 +60,7 @@ public class BudgetServiceImpl implements BudgetService{
 
     @Override
     public void checkBudgetStatus(Budgets budgets, BigDecimal montantRestant) {
+        //Mes Alertes
         double budgetAmount = budgets.getMontant();
         BigDecimal budgetAmountBigDecimal = BigDecimal.valueOf(budgetAmount);
 
@@ -82,6 +83,7 @@ public class BudgetServiceImpl implements BudgetService{
         if (montantRestant1.compareTo(BigDecimal.ZERO) == 0) {
             createBudgetAlert(budgets, montantRestant, 0);
         }
+        //Mes Alertes
 
 
 
@@ -96,7 +98,6 @@ public class BudgetServiceImpl implements BudgetService{
         alertes.setBudgets(budget);
         alerteService.creer(alertes);
         //Alert
-
         EmailDetails details = new EmailDetails(budget.getUsers().getEmail(), message, "Details du Budget");
         emailServiceIplm.sendSimpleMail(details);
 

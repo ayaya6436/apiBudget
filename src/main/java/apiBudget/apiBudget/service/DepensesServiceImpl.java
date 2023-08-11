@@ -24,12 +24,14 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class DepensesServiceImpl implements DepensesService {
-
+    @Autowired
     // Injection du référentiel DepensesRepository
     private final DepensesRepository depensesRepository;
     private final BudgetsRepository budgetsRepository; // Injection du référentiel Budgets
     private EmailServiceImpl emailServiceIplm;
     private AlerteService alerteService;
+    private BudgetService budgetService;
+    private EmailService emailService;
 
     // Création
     public String creer(Depenses depenses) {
@@ -66,7 +68,7 @@ public class DepensesServiceImpl implements DepensesService {
             Depenses nouvelDepenses = depensesRepository.save(depenses);
 
             if (nouvelDepenses != null) {
-                String msg = "Votre Budget est de " +budget.getMontant()+ " FCFA pour une depense en "+depenses.getTitre()+
+                /*String msg = "Votre Budget est de " +budget.getMontant()+ " FCFA pour une depense en "+depenses.getTitre()+
                         "et votre montant restant est " + montantRestant;
                 EmailDetails details = new EmailDetails(budget.getUsers().getEmail(), msg, "Details du depense");
                 emailServiceIplm.sendSimpleMail(details);
@@ -76,7 +78,47 @@ public class DepensesServiceImpl implements DepensesService {
                 alertes.setDate_alertes(dateToday);
                 alertes.setDescription(msg);
                 alertes.setBudgets(budget);
-                alerteService.creer(alertes);
+                alerteService.creer(alertes);*/
+
+                //Mes Alertes
+                double budgetAmount = budget.getMontant();
+                BigDecimal budgetAmountBigDecimal = BigDecimal.valueOf(budgetAmount);
+
+                //BigDecimal montantRestant1 = budgetAmountBigDecimal.subtract(montantRestant);
+                // Vérification de réduction de budget
+                BigDecimal fiftyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.5"));
+                BigDecimal seventyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.35"));
+                BigDecimal ninetyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.1"));
+                //==================================================///
+                if (montantRestant.compareTo(BigDecimal.ZERO) == 0) {
+
+                    // Vérification de montant restant égal à 0
+                    createBudgetAlert(budget, montantRestant, 0);
+                    System.out.println("condition 4");
+
+
+
+                }
+                else if (montantRestant.compareTo(ninetyPercent) <= 0){
+                    // block of code to be executed if the condition1 is false and condition2 is true
+                    createBudgetAlert(budget, montantRestant, 10);
+                    System.out.println("condition 3");
+
+                }
+               else if (montantRestant.compareTo(seventyPercent) <= 0) {
+                    // block of code to be executed if the condition1 is false and condition2 is true
+                    createBudgetAlert(budget, montantRestant, 35);
+                    System.out.println("condition 2");
+
+                }  else if (montantRestant.compareTo(fiftyPercent) <= 0) {
+                    createBudgetAlert(budget, montantRestant, 50);
+                    System.out.println("condition 1");
+                }
+                System.out.println("fiftyPercent: " + fiftyPercent);
+                System.out.println("seventyPercent: " + seventyPercent);
+                System.out.println("ninetyPercent: " + ninetyPercent);
+
+                //Mes Alertes
 
 
 
@@ -151,6 +193,38 @@ public class DepensesServiceImpl implements DepensesService {
             // Mise à jour du montant restant du budget dans la base
             budget.setMontantRestant(nouveauMontantRestant);
             budgetsRepository.save(budget);
+
+            //Mes Alertes
+            double budgetAmount = budget.getMontant();
+            BigDecimal budgetAmountBigDecimal = BigDecimal.valueOf(budgetAmount);
+
+            BigDecimal montantRestant1 = budgetAmountBigDecimal.subtract(nouveauMontantRestant);
+            // Vérification de réduction de budget
+            BigDecimal fiftyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.5"));
+            BigDecimal seventyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.3"));
+            BigDecimal ninetyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.1"));
+
+            //==================================================///
+            if (montantRestant1.compareTo(fiftyPercent) <= 0) {
+                // block of code to be executed if condition1 is true
+                createBudgetAlert(budget, nouveauMontantRestant, 50);
+            } else if (montantRestant1.compareTo(seventyPercent) <= 0) {
+                // block of code to be executed if the condition1 is false and condition2 is true
+                createBudgetAlert(budget, nouveauMontantRestant, 30);
+            } else if (montantRestant1.compareTo(ninetyPercent) <= 0){
+                // block of code to be executed if the condition1 is false and condition2 is true
+                createBudgetAlert(budget, nouveauMontantRestant, 10);
+            } else if (montantRestant1.compareTo(BigDecimal.ZERO) == 0) {
+
+                // Vérification de montant restant égal à 0
+                createBudgetAlert(budget, nouveauMontantRestant, 0);
+
+
+            }
+
+
+
+
     
             return "Dépense modifiée avec succès. Montant restant du budget : " + nouveauMontantRestant + " FCFA";
         } else {
@@ -171,6 +245,26 @@ public class DepensesServiceImpl implements DepensesService {
         }
         return null;
     }
+    //Ma fonction d'alerte
+    private void createBudgetAlert(Budgets budget, BigDecimal montantRestant, int percentage) {
+        String message = "Votre budget a diminué de " + percentage + "% et votre montant restant est de " + montantRestant;
+        Alertes alertes = new Alertes();
+        alertes.setDate_alertes(LocalDate.now());
+        alertes.setDescription(message);
+        alertes.setBudgets(budget);
+        alerteService.creer(alertes);
+        //Alert
+        EmailDetails details = new EmailDetails();
+        //EmailDetails details = new EmailDetails(budget.getUsers().getEmail(), message, "Details du Budget");
+        details.setEmail(budget.getUsers().getEmail());
+        //System.out.println("==============================="+details.getEmail()+"=============================");
+        details.setMessageBody(message);
+        details.setSujet("Details du Budget");
+        emailServiceIplm.sendSimpleMail(details);
+
+
+    }
+
 }
 
 

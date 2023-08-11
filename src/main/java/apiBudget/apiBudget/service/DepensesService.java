@@ -20,4 +20,5 @@ public interface DepensesService {
   
       //Supprimer les depenses
       String supprimer(Long id);
+
 }
