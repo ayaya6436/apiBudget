@@ -29,7 +29,7 @@ public class BudgetServiceImpl implements BudgetService {
 
     @Override
     public String creer(Budgets budgets) {
-        budgets.setMontantRestant(BigDecimal.valueOf(budgets.getMontant()));
+        budgets.setMontantRestant(new BigDecimal(budgets.getMontant().doubleValue()));
         budgetsRepository.save(budgets);
         return "Votre budget a été défini avec succès";
     }
@@ -58,8 +58,9 @@ public class BudgetServiceImpl implements BudgetService {
 
     @Override
     public void checkBudgetStatus(Budgets budgets, BigDecimal montantRestant) {
-        double budgetAmount = budgets.getMontant();
-        BigDecimal budgetAmountBigDecimal = BigDecimal.valueOf(budgetAmount);
+        //Mes Alertes
+        BigDecimal budgetAmount = budgets.getMontant();
+        BigDecimal budgetAmountBigDecimal = budgetAmount;
 
         BigDecimal montantRestant1 = budgetAmountBigDecimal.subtract(montantRestant);
 
@@ -105,7 +106,6 @@ public class BudgetServiceImpl implements BudgetService {
             return false;
         }
     }
-
     @Override
     public BigDecimal depense_total(Long id) {
         List<Depenses> list = depensesRepository.findAllByBudgets_Id(id);

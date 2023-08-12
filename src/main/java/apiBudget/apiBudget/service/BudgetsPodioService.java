@@ -81,14 +81,14 @@ public class BudgetsPodioService {
                     return "Un budgets a ete defini pour cette categories";
                 }
                 budgets.setUsers(users);
-                if (budgetsPodio.getMontant()>0){
+                if (budgetsPodio.getMontant().intValue()>0){
                     budgets.setMontant(budgetsPodio.getMontant());
                     Categories categories = categoriesRepository.findCategoriesById(budgetsPodio.getId_categories());
                     if (categories!=null){
                         budgets.setCategories(categories);
                         budgetsRepository.save(budgets);
                         //Alert
-                        String msg = "Votre Budget a été defini avec " +budgets.getMontant()+ " FCFA \n"+warning;
+                        String msg = "Votre Budget a été defini avec un montant de " +budgets.getMontant()+ " FCFA \n"+warning;
                         EmailDetails details = new EmailDetails(budgets.getUsers().getEmail(), msg, "Details du Budget");
                         emailServiceIplm.sendSimpleMail(details);
 
@@ -160,7 +160,8 @@ public class BudgetsPodioService {
 
             budgetsAffichage.setDate_fin(budget.getFin());
 
-            budgetsAffichage.setMontant(BigDecimal.valueOf(budget.getMontant()));
+            budgetsAffichage.setMontant(budget.getMontant());
+
 
 
             //Calcule du jours restant

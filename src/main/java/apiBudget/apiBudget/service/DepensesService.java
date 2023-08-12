@@ -6,6 +6,7 @@ import apiBudget.apiBudget.model.Depenses;
 
 
 public interface DepensesService {
+
      //Creation depense
       String creer(Depenses depenses);
 
@@ -20,4 +21,5 @@ public interface DepensesService {
   
       //Supprimer les depenses
       String supprimer(Long id);
+
 }

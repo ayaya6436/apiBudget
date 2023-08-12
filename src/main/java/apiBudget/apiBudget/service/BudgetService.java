@@ -5,7 +5,6 @@ import apiBudget.apiBudget.model.Budgets;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-
 public interface BudgetService {
     String creer(Budgets budgets);
     Budgets lire(Long id);
@@ -15,5 +14,4 @@ public interface BudgetService {
     Boolean Notactive(LocalDate date, Long id1,Long id2);
     BigDecimal depense_total(Long id);
     Boolean Incurrentbudget(LocalDate date,Long id_user,Long id_categorie);
-
 }

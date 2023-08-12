@@ -33,7 +33,7 @@ public class EmailServiceImpl implements EmailService {
             return "Email envoyer avec succès !";
 
     }catch (Exception e){
-        return "Error"+e;
+        throw new RuntimeException(e.getMessage());
 
         }}
 }

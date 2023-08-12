@@ -36,7 +36,7 @@ public class Budgets {
     private LocalDate debut;
     private LocalDate fin;
 
-    private double montant;
+    private BigDecimal montant;
     private BigDecimal montantRestant;
 
 //un budget ne peut etre lie qu'a un et un seul user

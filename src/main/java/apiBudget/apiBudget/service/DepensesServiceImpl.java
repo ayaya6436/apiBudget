@@ -2,7 +2,6 @@ package apiBudget.apiBudget.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -24,15 +23,18 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class DepensesServiceImpl implements DepensesService {
 
+  
     // Injection du référentiel DepensesRepository
     private final DepensesRepository depensesRepository;
     private final BudgetsRepository budgetsRepository; // Injection du référentiel Budgets
     private EmailServiceImpl emailServiceIplm;
     private AlerteService alerteService;
+    private AlerteServiceImpl alertSimp;
+    private AlertConditService alertConditService;
 
     // Création
     public String creer(Depenses depenses) {
-        //verification de la date
+        // verification de la date
         if (!Valid.dates(depenses.getDate_depenses())) {
             return "Veuillez saisir une date correcte";
         }
@@ -46,17 +48,16 @@ public class DepensesServiceImpl implements DepensesService {
                 .map(Depenses::getMontant)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal montantRestant = BigDecimal.valueOf(budget.getMontant()).subtract(totalDepenses);
+        BigDecimal montantRestant = budget.getMontant().subtract(totalDepenses);
 
         if (depenses.getMontant().compareTo(montantRestant) > 0) {
             return "Le montant de la dépense dépasse le montant  du budget: " + budget.getMontant() + " FCFA";
         }
 
         montantRestant = montantRestant.subtract(depenses.getMontant());
- // Mise à jour du montant restant du budget
+        // Mise à jour du montant restant du budget
         budget.setMontantRestant(montantRestant);
         budgetsRepository.save(budget); // Sauvegarde de la mise à jour dans la base de données
-                
 
         try {
             budgetsRepository.save(budget);
@@ -65,20 +66,56 @@ public class DepensesServiceImpl implements DepensesService {
             Depenses nouvelDepenses = depensesRepository.save(depenses);
 
             if (nouvelDepenses != null) {
-                String msg = "Votre Budget est de " +budget.getMontant()+ " FCFA pour une depense en "+depenses.getTitre()+
-                        "et votre montant restant est " + montantRestant;
-                EmailDetails details = new EmailDetails(budget.getUsers().getEmail(), msg, "Details du depense");
-                emailServiceIplm.sendSimpleMail(details);
-                LocalDate dateToday = LocalDate.now();
+                /*
+                 * String msg = "Votre Budget est de " +budget.getMontant()+
+                 * " FCFA pour une depense en "+depenses.getTitre()+
+                 * "et votre montant restant est " + montantRestant;
+                 * EmailDetails details = new EmailDetails(budget.getUsers().getEmail(), msg,
+                 * "Details du depense");
+                 * emailServiceIplm.sendSimpleMail(details);
+                 * LocalDate dateToday = LocalDate.now();
+                 * 
+                 * Alertes alertes = new Alertes();
+                 * alertes.setDate_alertes(dateToday);
+                 * alertes.setDescription(msg);
+                 * alertes.setBudgets(budget);
+                 * alerteService.creer(alertes);
+                 */
 
-                Alertes alertes = new Alertes();
-                alertes.setDate_alertes(dateToday);
-                alertes.setDescription(msg);
-                alertes.setBudgets(budget);
-                alerteService.creer(alertes);
+                // Mes Alertes
+                BigDecimal budgetAmount = budget.getMontant();
+                BigDecimal budgetAmountBigDecimal = budgetAmount;
+                // Réinitialisez alertSent à false à chaque vérification de budget
 
+                // BigDecimal montantRestant1 = budgetAmountBigDecimal.subtract(montantRestant);
+                // Vérification de réduction de budget
+                BigDecimal fiftyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.5"));
+                BigDecimal seventyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.35"));
+                BigDecimal ninetyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.1"));
+                // ==================================================///
+                if (montantRestant.compareTo(BigDecimal.ZERO) == 0) {
 
+                    // Vérification de montant restant égal à 0
+                    createBudgetAlert(budget, montantRestant, 0);
 
+                } else if (montantRestant.compareTo(ninetyPercent) <= 0 && !alertSimp.isAlertSent1()) {
+                    // block of code to be executed if the condition1 is false and condition2 is
+                    // true
+                    createBudgetAlert(budget, montantRestant, 10);
+                    alertSimp.setAlertSent1(true);
+
+                } else if (montantRestant.compareTo(seventyPercent) <= 0 && !alertSimp.isAlertSent2()) {
+                    // block of code to be executed if the condition1 is false and condition2 is
+                    // true
+                    createBudgetAlert(budget, montantRestant, 35);
+                    alertSimp.setAlertSent2(true);
+
+                } else if (montantRestant.compareTo(fiftyPercent) <= 0 && !alertSimp.isAlertSent3()) {
+                    createBudgetAlert(budget, montantRestant, 50);
+                    alertSimp.setAlertSent3(true);
+                }
+
+                // Mes Alertes
 
                 return "Dépense créée avec succès. ResteBudget =" + montantRestant + " FCFA";
             } else {
@@ -88,9 +125,6 @@ public class DepensesServiceImpl implements DepensesService {
             return "Une erreur est survenue lors de la création de la dépense : " + e.getMessage();
         }
     }
-    
-
-   
 
     @Override
     public List<Depenses> lire() {
@@ -106,51 +140,83 @@ public class DepensesServiceImpl implements DepensesService {
 
     @Override
     public Depenses lire(Long id) {
-        return depensesRepository.findById(id).orElseThrow(()-> new RuntimeException("depenses non trouvé !"));
+        return depensesRepository.findById(id).orElseThrow(() -> new RuntimeException("depenses non trouvé !"));
     }
+
     @Override
     public String modifier(Long id, Depenses depenses) {
         Optional<Depenses> existingDepense = depensesRepository.findById(id);
-    
+
         if (existingDepense.isPresent()) {
             Depenses d = existingDepense.get();
-    
+
             // Sauvegarde du montant initial de la dépense
             BigDecimal montantInitialDepense = d.getMontant();
-    
+
             // Calcul de la différence entre les montants initial et modifié de la dépense
             BigDecimal differenceMontant = depenses.getMontant().subtract(montantInitialDepense);
-    
+
             // Récupération du budget initial
             Budgets budget = d.getBudgets();
             BigDecimal montantRestantBudget = budget.getMontantRestant();
-    
+
             // Mettre à jour le montant restant du budget en fonction de la différence
             BigDecimal nouveauMontantRestant = montantRestantBudget.subtract(differenceMontant);
-    
+
             // Vérifier les limites pour éviter un montant restant négatif
             if (nouveauMontantRestant.compareTo(BigDecimal.ZERO) < 0) {
-              return "Le montant de la dépense dépasse le montant  du budget: " + budget.getMontant() + " FCFA";
+                return "Le montant de la dépense dépasse le montant  du budget: " + budget.getMontant() + " FCFA";
 
             }
-    
+
             // Mise à jour de la dépense avec les nouvelles valeurs
             d.setTitre(depenses.getTitre());
             d.setMontant(depenses.getMontant());
             d.setDate_depenses(depenses.getDate_depenses());
             d.setNote(depenses.getNote());
             depensesRepository.save(d);
-    
+
             // Mise à jour du montant restant du budget dans la base
             budget.setMontantRestant(nouveauMontantRestant);
             budgetsRepository.save(budget);
-    
+
+            // Mes Alertes
+            BigDecimal budgetAmount = budget.getMontant();
+            BigDecimal budgetAmountBigDecimal = budgetAmount;
+
+            // BigDecimal montantRestant1 = budgetAmountBigDecimal.subtract(montantRestant);
+            // Vérification de réduction de budget
+            BigDecimal fiftyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.5"));
+            BigDecimal seventyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.35"));
+            BigDecimal ninetyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.1"));
+            // ==================================================///
+            if (nouveauMontantRestant.compareTo(BigDecimal.ZERO) == 0) {
+
+                // Vérification de montant restant égal à 0
+                createBudgetAlert(budget, nouveauMontantRestant, 0);
+
+            } else if (nouveauMontantRestant.compareTo(ninetyPercent) <= 0) {
+                // block of code to be executed if the condition1 is false and condition2 is
+                // true
+                createBudgetAlert(budget, nouveauMontantRestant, 10);
+
+            } else if (nouveauMontantRestant.compareTo(seventyPercent) <= 0) {
+                // block of code to be executed if the condition1 is false and condition2 is
+                // true
+                createBudgetAlert(budget, nouveauMontantRestant, 35);
+
+            } else if (nouveauMontantRestant.compareTo(fiftyPercent) <= 0) {
+                createBudgetAlert(budget, nouveauMontantRestant, 50);
+            }
+
+            // Mes Alertes
+
             return "Dépense modifiée avec succès. Montant restant du budget : " + nouveauMontantRestant + " FCFA";
         } else {
             throw new NoSuchElementException("Dépense non trouvée avec l'ID: " + id);
         }
     }
-    
+
     @Override
 public String supprimer(Long id) {
     Optional<Depenses> existingDepense = depensesRepository.findById(id);
@@ -178,6 +244,25 @@ public String supprimer(Long id) {
         throw new NoSuchElementException("Dépense non trouvée avec l'ID: " + id);
     }
 }
+    //Ma fonction d'alerte
+    private void createBudgetAlert(Budgets budget, BigDecimal montantRestant, int percentage) {
+        String message = "Votre budget a diminué de " + percentage + "% et votre montant restant est de " + montantRestant;
+        Alertes alertes = new Alertes();
+        alertes.setDate_alertes(LocalDate.now());
+        alertes.setDescription(message);
+        alertes.setBudgets(budget);
+        alerteService.creer(alertes);
+        //Alert
+        EmailDetails details = new EmailDetails();
+        //EmailDetails details = new EmailDetails(budget.getUsers().getEmail(), message, "Details du Budget");
+        details.setEmail(budget.getUsers().getEmail());
+        //System.out.println("==============================="+details.getEmail()+"=============================");
+        details.setMessageBody(message);
+        details.setSujet("Details du Budget");
+        emailServiceIplm.sendSimpleMail(details);
+
+
+    }
 
 }
 

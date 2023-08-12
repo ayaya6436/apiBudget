@@ -25,5 +25,4 @@ public interface BudgetsRepository extends JpaRepository<Budgets,Long> {
     List<Budgets> findDistinctFinByUsers_IdAndCategories_IdOrderByFinDesc(Long id,Long id2);
 
 
-
 }
