@@ -11,7 +11,7 @@ import java.time.format.DateTimeParseException;
 public class Valid {
     public static Boolean dates(String date){
         LocalDate date1 ;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         int days = Integer.parseInt(date.substring(0,2));
         try {
             date1 = LocalDate.parse(date,formatter);

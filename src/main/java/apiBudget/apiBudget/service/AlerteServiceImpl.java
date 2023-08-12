@@ -3,12 +3,9 @@ package apiBudget.apiBudget.service;
 import apiBudget.apiBudget.model.*;
 import apiBudget.apiBudget.repository.AlertesRepository;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
+
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 @Service

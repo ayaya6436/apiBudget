@@ -1,7 +1,7 @@
 package apiBudget.apiBudget.service;
 
 import apiBudget.apiBudget.model.AlertConditionBoolean;
-import apiBudget.apiBudget.model.Alertes;
+
 
 public interface ALERTCOND {
     String creerB1(AlertConditionBoolean pourcent1);
