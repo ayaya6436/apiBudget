@@ -133,23 +133,18 @@ public class BudgetsPodioService {
             //Maintenant obtenons le dernier budget defini pour chaque categorie
 
             for (Long categorie: categoriesList ) {
-                List<Budgets> results  = budgetsRepository.findDistinctFinByUsers_IdAndCategories_IdOrderByFinDesc(id,categorie);
-                if (results.size()==1){
-                    //Ca veut dire qu'un budget defini pour cette categorie donc verifions que ce n'est pas un mois courant
-                    if (!budgetService.Incurrentbudget(results.get(0).getFin(),id,categorie)){
-                        list.add(results.get(0));
-                    }
-                } else if (results.size()>=2) {
-                    //ca veut dire qu'on au moins deux date
-                    if (!budgetService.Incurrentbudget(results.get(0).getFin(),id,categorie)){
-                        list.add(results.get(0));
+                List<Budgets> results  = budgetsRepository.findoldbudget(LocalDate.now(),id,categorie);
+                if (!results.isEmpty()){
+                    if (budgetService.Incurrentbudget(results.get(0).getFin(),id,categorie)){
+                        if (results.size()>1){
+                            list.add(results.get(1));
+                        }
                     }else {
-                        list.add(results.get(1));
+                        list.add(results.get(0));
                     }
                 }
-            }
 
-
+                }
         }else {
             list = budgetsRepository.findAllByUsers_IdOrderByFinDesc(id);
         }

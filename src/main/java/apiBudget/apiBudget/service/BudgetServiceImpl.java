@@ -132,8 +132,8 @@ public class BudgetServiceImpl implements BudgetService{
     @Override
     public Boolean Incurrentbudget(LocalDate date,Long id_user, Long id_categorie){
         LocalDate datetoday = LocalDate.now();
-         Optional<Budgets> budgets = budgetsRepository.findByDebutBeforeOrDebutEqualsAndFinAfterOrFinEqualsAndUsers_IdAndCategories_Id(datetoday,datetoday,datetoday,datetoday,id_user,id_categorie);
-        if (budgets.isPresent()){
+         Budgets budgets = budgetsRepository.findcurrentbudget(datetoday,id_user,id_categorie);
+        if (budgets!=null){
                 //ca veut dire qu'il y a un budget courant pour cette categorie
                 return true;
             }
