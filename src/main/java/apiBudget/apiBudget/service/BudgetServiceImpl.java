@@ -17,6 +17,7 @@ import java.util.List;
 
 @Service
 @Data
+
 public class BudgetServiceImpl implements BudgetService{
     @Autowired
     private BudgetsRepository budgetsRepository;
@@ -24,8 +25,9 @@ public class BudgetServiceImpl implements BudgetService{
     private AlerteService alerteService;
     @Autowired
     private EmailServiceImpl emailServiceIplm;
+    @Autowired
     private DepensesRepository depensesRepository;
-
+    @Autowired
     private CategoriesRepository categoriesRepository;
 
     public BudgetServiceImpl(BudgetsRepository budgetsRepository,CategoriesRepository categoriesRepository, DepensesRepository depensesRepository) {
@@ -143,5 +145,10 @@ public class BudgetServiceImpl implements BudgetService{
             return false;
         }
         return false;
+    }
+
+    @Override
+    public Budgets getBudgetsById(Long id) {
+        return budgetsRepository.findById(id).orElseThrow(()-> new RuntimeException("Budget non trouvé !"));
     }
 }

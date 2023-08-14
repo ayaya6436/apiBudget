@@ -6,15 +6,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import apiBudget.apiBudget.model.Alertes;
-import apiBudget.apiBudget.model.EmailDetails;
-import apiBudget.apiBudget.repository.EmailService;
+import apiBudget.apiBudget.model.*;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import apiBudget.apiBudget.model.Budgets;
-
-import apiBudget.apiBudget.model.Depenses;
 import apiBudget.apiBudget.repository.BudgetsRepository;
 import apiBudget.apiBudget.repository.DepensesRepository;
 
@@ -22,6 +18,7 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
+@Data
 public class DepensesServiceImpl implements DepensesService {
 
 
@@ -32,7 +29,10 @@ public class DepensesServiceImpl implements DepensesService {
     private EmailServiceImpl emailServiceIplm;
     private AlerteService alerteService;
     private AlerteServiceImpl alertSimp;
-    private AlertConditService alertConditService;
+
+
+
+
 
 
 
@@ -87,7 +87,8 @@ public class DepensesServiceImpl implements DepensesService {
                 //Mes Alertes
                 BigDecimal budgetAmount = budget.getMontant();
                 BigDecimal budgetAmountBigDecimal = budgetAmount;
-                // Réinitialisez alertSent à false à chaque vérification de budget
+                //
+
 
 
 
@@ -99,6 +100,10 @@ public class DepensesServiceImpl implements DepensesService {
                 BigDecimal fiftyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.5"));
                 BigDecimal seventyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.35"));
                 BigDecimal ninetyPercent = budgetAmountBigDecimal.multiply(new BigDecimal("0.1"));
+
+
+
+                //Mes Alertes
                 //==================================================///
                 if (montantRestant.compareTo(BigDecimal.ZERO) == 0) {
 
@@ -116,6 +121,7 @@ public class DepensesServiceImpl implements DepensesService {
 
 
 
+
                 }
                else if (montantRestant.compareTo(seventyPercent) <= 0 && !alertSimp.isAlertSent2()) {
                     // block of code to be executed if the condition1 is false and condition2 is true
@@ -129,6 +135,7 @@ public class DepensesServiceImpl implements DepensesService {
 
 
                 //Mes Alertes
+
 
 
 
@@ -282,6 +289,7 @@ public class DepensesServiceImpl implements DepensesService {
 
 
     }
+
 
 }
 

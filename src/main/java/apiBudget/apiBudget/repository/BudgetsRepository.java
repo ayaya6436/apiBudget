@@ -19,6 +19,7 @@ public interface BudgetsRepository extends JpaRepository<Budgets,Long> {
     List<Budgets> findAllByUsers_IdOrderByFinDesc(Long id);
     List<Budgets> findAllByUsers_IdAndFinAfterOrFinEquals(Long id,LocalDate date1,LocalDate date2);
 
+
     @Query(value = "SELECT DISTINCT c.* " +
             "FROM categories c " +
             "JOIN budgets b ON c.id = b.id_categories " +
