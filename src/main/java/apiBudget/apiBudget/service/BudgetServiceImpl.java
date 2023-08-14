@@ -115,7 +115,7 @@ public class BudgetServiceImpl implements BudgetService{
 //on verifie qu'il nya pas de bubget active par rapport a une date du user
 @Override
     public  Boolean Notactive(LocalDate date, Long id1,Long id2) {
-        List<Budgets> list = budgetsRepository.findAllByFinAfterOrFinEqualsAndUsers_IdAndCategories_Id(date,date,id1,id2);
+        List<Budgets> list = budgetsRepository.findAllByFinAfterOrFinEqualsAndUsers_IdAndCategories_Ids(date,id1,id2);
         if (list.isEmpty()){
             return true;
         }else {

@@ -31,19 +31,21 @@ public class BudgetsPodioService {
     private BudgetsRepository budgetsRepository;
     @Autowired
     private BudgetService budgetService;
+    @Autowired
+    private DepensesRepository depensesRepository;
 
     @Autowired
     private AlerteService alerteService;
     @Autowired
     private EmailServiceImpl emailServiceIplm;
-    private DepensesRepository depensesRepository;
 
 
-    public BudgetsPodioService(UsersRepository usersRepository,BudgetService budgetService, CategoriesRepository categoriesRepository, BudgetsRepository budgetsRepository) {
+    public BudgetsPodioService(UsersRepository usersRepository,BudgetService budgetService, CategoriesRepository categoriesRepository, BudgetsRepository budgetsRepository, DepensesRepository depensesRepository) {
         this.usersRepository = usersRepository;
         this.categoriesRepository = categoriesRepository;
         this.budgetsRepository = budgetsRepository;
         this.budgetService = budgetService;
+        this.depensesRepository = depensesRepository;
     }
     public String creer(BudgetsPodio budgetsPodio){
         //on verifie la date

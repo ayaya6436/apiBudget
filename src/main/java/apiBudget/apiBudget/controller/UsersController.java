@@ -35,6 +35,7 @@ public class UsersController {
     @PostMapping("")
     @Operation(summary = "Creer un nouveau user")
     public String create(@Valid @RequestBody Users users){
+
         return usersService.creer(users);
     }
 

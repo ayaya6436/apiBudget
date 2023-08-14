@@ -12,7 +12,12 @@ import java.util.Optional;
 
 public interface BudgetsRepository extends JpaRepository<Budgets,Long> {
 
-    List<Budgets> findAllByFinAfterOrFinEqualsAndUsers_IdAndCategories_Id(LocalDate date,LocalDate date1,Long id1,Long id2);
+    @Query(value = "SELECT * FROM budgets " +
+            "WHERE (fin > :dateActuelle OR fin = :dateActuelle) " +
+            "AND  id_users = :idUser " +
+            "AND id_categories = :idCategorie ", nativeQuery = true)
+
+    List<Budgets> findAllByFinAfterOrFinEqualsAndUsers_IdAndCategories_Ids(@Param("dateActuelle") LocalDate date,@Param("idUser") Long id1,@Param("idCategorie") Long id2);
 
     List<Budgets> findAllByUsers_IdOrderByFinDesc(Long id);
 
