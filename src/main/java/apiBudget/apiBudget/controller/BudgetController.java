@@ -2,6 +2,8 @@ package apiBudget.apiBudget.controller;
 
 import apiBudget.apiBudget.model.Budgets;
 import apiBudget.apiBudget.model.BudgetsPodio;
+import apiBudget.apiBudget.model.BudgetsU;
+import apiBudget.apiBudget.repository.BudgetsRepository;
 import apiBudget.apiBudget.service.BudgetService;
 import apiBudget.apiBudget.service.BudgetServiceImpl;
 import apiBudget.apiBudget.service.BudgetsPodioService;
@@ -17,6 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Map;
+import java.util.Optional;
 
 
 @RequestMapping("/budgets")
@@ -28,6 +31,7 @@ public class BudgetController {
     private BudgetService budgetService;
     private BudgetsPodioService budgetsPodioService;
     private BudgetServiceImpl budgetservivceImpl;
+    private BudgetsRepository budgetsRepository;
 
     @PostMapping("")
     @Operation(summary = "Enregistrer un budget pour chaque categorie")
@@ -43,9 +47,28 @@ public class BudgetController {
 
     }
     @PatchMapping("")
-    public Object modifier(@RequestParam Long id,@RequestBody Budgets budgets){
-        Long idu= 0L;
-        return budgetService.modifier(id,idu,budgets);
+    public Object modifier(@RequestParam Long id,@RequestBody BudgetsU budgets){
+        if (budgets.getId_budgets()!=null){
+            Optional<Budgets> budgets1 = budgetsRepository.findByIdAndUsers_Id(budgets.getId_budgets(),id);
+            if (budgets1.isPresent()){
+                if (budgets.getMontant()!=null){
+                    BigDecimal depense = budgetService.depense_total(budgets1.get().getId());
+                    if (depense.compareTo(budgets.getMontant()) <=0){
+                        budgets1.get().setMontant(budgets.getMontant());
+                        budgets1.get().setMontantRestant(budgets.getMontant().subtract(depense));
+                        budgetsRepository.save(budgets1.get());
+                        return "Modifier avec succes";
+                    }else {
+                        return "Depense effectuer eleve par rapport a cette montant ";
+                    }
+                }else {
+                    return "Veuillez renseigner le montant";
+                }
+            }else {
+                return "Budgets non desponible";
+            }
+        }
+        return "Budget not found";
     }
 
     @GetMapping("DEPENSE_QUOTIDIEN/{budgetId}")

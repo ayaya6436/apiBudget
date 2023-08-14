@@ -47,7 +47,9 @@ public class DepensesServiceImpl implements DepensesService {
         if (budget == null) {
             return "Budget non trouvé. Veuillez spécifier un budget valide pour la dépense.";
         }
-
+        if (budget.getDebut().isAfter(depenses.getDate_depenses()) || budget.getFin().isBefore(depenses.getDate_depenses())){
+            return "Date non correspondant a la duree du budget";
+        }
         BigDecimal totalDepenses = budget.getDepenses()
                 .stream()
                 .map(Depenses::getMontant)

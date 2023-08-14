@@ -22,7 +22,7 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public String creer(Users users) {
         try {
-            Users nouvelUtilisateur = usersRepository.save(users);
+            usersRepository.save(users);
         }catch (DataAccessException e){
             return "Donnee incorrecte";
         }

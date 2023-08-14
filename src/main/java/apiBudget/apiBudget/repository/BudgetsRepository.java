@@ -12,7 +12,13 @@ import java.util.Optional;
 
 public interface BudgetsRepository extends JpaRepository<Budgets,Long> {
 
-    List<Budgets> findAllByFinAfterOrFinEqualsAndUsers_IdAndCategories_Id(LocalDate date,LocalDate date1,Long id1,Long id2);
+    @Query(value = "SELECT * FROM budgets " +
+            "WHERE (fin > :dateActuelle OR fin = :dateActuelle) " +
+            "AND  id_users = :idUser " +
+            "AND id_categories = :idCategorie ", nativeQuery = true)
+
+    List<Budgets> findAllByFinAfterOrFinEqualsAndUsers_IdAndCategories_Ids(@Param("dateActuelle") LocalDate date,@Param("idUser") Long id1,@Param("idCategorie") Long id2);
+
 
     List<Budgets> findAllByUsers_IdOrderByFinDesc(Long id);
 
@@ -33,7 +39,9 @@ public interface BudgetsRepository extends JpaRepository<Budgets,Long> {
     //List<Budgets> findAllByDebutBeforeOrDebutEqualsAndFinAfterOrFinEqualsAndUsers_Id(@Param("date1") LocalDate date1,@Param("date2") LocalDate date2,@Param("date3")LocalDate date3,@Param("date4") LocalDate date4,@Param("id") Long id);
 
 
+
     @Query(value = "SELECT DISTINCT c.id " +
+
 
             "FROM categories c " +
             "JOIN budgets b ON c.id = b.id_categories " +
