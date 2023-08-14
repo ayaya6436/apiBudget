@@ -231,11 +231,10 @@ public class BudgetsPodioService {
         return monthlyBudgetSums;
     }
 
-    // Ajoutez d'autres méthodes pour la comparaison des statistiques et des sommes des budgets
-
+    //////STATISTIQUE
 }
 
-//////STATISTIQUE
+
 
 
 
