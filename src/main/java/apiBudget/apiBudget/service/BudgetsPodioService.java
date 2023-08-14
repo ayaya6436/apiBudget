@@ -3,28 +3,40 @@ package apiBudget.apiBudget.service;
 import apiBudget.apiBudget.model.*;
 import apiBudget.apiBudget.repository.BudgetsRepository;
 import apiBudget.apiBudget.repository.CategoriesRepository;
+import apiBudget.apiBudget.repository.DepensesRepository;
 import apiBudget.apiBudget.repository.UsersRepository;
 
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.*;
 
 @Service
+@Data
 public class BudgetsPodioService {
+    @Autowired
     private UsersRepository usersRepository;
+    @Autowired
     private CategoriesRepository categoriesRepository;
+    @Autowired
     private BudgetsRepository budgetsRepository;
+    @Autowired
     private BudgetService budgetService;
 
     @Autowired
     private AlerteService alerteService;
     @Autowired
     private EmailServiceImpl emailServiceIplm;
+    private DepensesRepository depensesRepository;
 
 
     public BudgetsPodioService(UsersRepository usersRepository,BudgetService budgetService, CategoriesRepository categoriesRepository, BudgetsRepository budgetsRepository) {
@@ -183,8 +195,47 @@ public class BudgetsPodioService {
         return affichageList;
     }
 
+    /////STATISTIQUE
+    public Map<LocalDate, BigDecimal> getDailyExpenses(Budgets budgets) {
+        // Récupérer les dépenses pour le budget donné
+        List<Depenses> depenses = depensesRepository.findByBudget(budgets);
+
+        // Calculer les dépenses par jour
+        Map<LocalDate, BigDecimal> depenseQuotidien = new HashMap<>();
+        for (Depenses depense : depenses) {
+            LocalDate date = depense.getDate_depenses();
+            BigDecimal amount = depense.getMontant();
+
+            depenseQuotidien.merge(date, amount, BigDecimal::add);
+        }
+
+        return depenseQuotidien;
+    }
+
+    public Map<YearMonth, BigDecimal> getMonthlyBudgetSums() {
+        // Récupérer tous les budgets
+        List<Budgets> budgets = budgetsRepository.findAll();
+
+        // Calculer les sommes des budgets par mois
+        Map<YearMonth, BigDecimal> monthlyBudgetSums = new HashMap<>();
+        for (Budgets budget : budgets) {
+            YearMonth yearMonth = YearMonth.from(budget.getDebut());
+            BigDecimal amount = budget.getMontant();
+
+            monthlyBudgetSums.merge(yearMonth, amount, BigDecimal::add);
+        }
+
+        return monthlyBudgetSums;
+    }
+
+    // Ajoutez d'autres méthodes pour la comparaison des statistiques et des sommes des budgets
 
 }
+
+//////STATISTIQUE
+
+
+
 
 
 

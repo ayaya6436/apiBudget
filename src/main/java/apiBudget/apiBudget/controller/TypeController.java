@@ -17,7 +17,7 @@ public class TypeController {
    private final TypeService typeService;
 
     @PostMapping("/create")
-    @Operation(summary = "Crée un nouveau catégorie")
+    @Operation(summary = "Crée un nouveau Type")
     public String create(@Valid @RequestBody Types types){
         return typeService.creer(types);
     }

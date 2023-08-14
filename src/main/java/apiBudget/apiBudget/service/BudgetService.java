@@ -14,4 +14,5 @@ public interface BudgetService {
     Boolean Notactive(LocalDate date, Long id1,Long id2);
     BigDecimal depense_total(Long id);
     Boolean Incurrentbudget(LocalDate date,Long id_user,Long id_categorie);
+    Budgets getBudgetsById(Long id);
 }

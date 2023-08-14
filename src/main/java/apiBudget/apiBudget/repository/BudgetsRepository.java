@@ -31,7 +31,7 @@ public interface BudgetsRepository extends JpaRepository<Budgets,Long> {
 
     //List<Budgets> findAllByDebutBeforeOrDebutEqualsAndFinAfterOrFinEqualsAndUsers_Id(@Param("date1") LocalDate date1,@Param("date2") LocalDate date2,@Param("date3")LocalDate date3,@Param("date4") LocalDate date4,@Param("id") Long id);
 
-    @Query(value = "SELECT DISTINCT c.id " +
+    @Query(value = "SELECT DISTINCT c.* " +
             "FROM categories c " +
             "JOIN budgets b ON c.id = b.id_categories " +
             "WHERE b.id_users = :id", nativeQuery = true)

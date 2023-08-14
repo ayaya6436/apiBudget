@@ -6,6 +6,7 @@ import apiBudget.apiBudget.model.Depenses;
 
 
 public interface DepensesService {
+
      //Creation depense
       String creer(Depenses depenses);
 
