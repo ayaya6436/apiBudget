@@ -17,7 +17,6 @@ public interface BudgetsRepository extends JpaRepository<Budgets,Long> {
     List<Budgets> findAllByUsers_IdOrderByFinDesc(Long id);
 
 
-
     @Query(value = "SELECT * from budgets" +
             " WHERE (debut < :today OR debut = :today)" +
             " AND id_categories = :id_categories" +
@@ -32,6 +31,7 @@ public interface BudgetsRepository extends JpaRepository<Budgets,Long> {
     List<Budgets> findAllBycurrentbudget(@Param("dateAujourdhui") LocalDate dateAujourdhui,@Param("id_utilisateur") Long id_utilisateur);
 
     //List<Budgets> findAllByDebutBeforeOrDebutEqualsAndFinAfterOrFinEqualsAndUsers_Id(@Param("date1") LocalDate date1,@Param("date2") LocalDate date2,@Param("date3")LocalDate date3,@Param("date4") LocalDate date4,@Param("id") Long id);
+
 
     @Query(value = "SELECT DISTINCT c.id " +
 

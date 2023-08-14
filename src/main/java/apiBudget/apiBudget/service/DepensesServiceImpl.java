@@ -196,7 +196,7 @@ public class DepensesServiceImpl implements DepensesService {
     
             // Vérifier les limites pour éviter un montant restant négatif
             if (nouveauMontantRestant.compareTo(BigDecimal.ZERO) < 0) {
-              return "Le montant de la dépense dépasse le montant  du budget: " + budget.getMontant() + " FCFA";
+              return "Le montant de la dépense dépasse le montant  du budget: " + montantRestantBudget + " FCFA";
 
             }
     
