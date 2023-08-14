@@ -44,16 +44,20 @@ public class BudgetController {
     }
     @PatchMapping("")
     public Object modifier(@RequestParam Long id,@RequestBody Budgets budgets){
-        return budgetService.modifier(id,budgets);
+        Long idu= 0L;
+        return budgetService.modifier(id,idu,budgets);
     }
 
-    @GetMapping("DEPENSE QUOTIDIEN/{budgetId}")
+    @GetMapping("DEPENSE_QUOTIDIEN/{budgetId}")
+    @Operation(summary = "La liste des dépenses quotidien par budget")
     public ResponseEntity<Map<LocalDate, BigDecimal>> getDepensequotidien(@Valid @PathVariable Long budgetId){
         Budgets budgets = budgetservivceImpl.getBudgetsById(budgetId);
         Map<LocalDate, BigDecimal> depensequotidient = budgetsPodioService.getDailyExpenses(budgets);
         return  ResponseEntity.ok(depensequotidient);
     }
-    @GetMapping("sommebParMois")
+    @GetMapping("sommeBparMois")
+    @Operation(summary = "Affiche la somme des budgets par mois")
+
     public ResponseEntity <Map<YearMonth, BigDecimal>> getMonthlyBudgetSum(){
         Map<YearMonth, BigDecimal> monthlyBsum = budgetsPodioService.getMonthlyBudgetSums();
         return ResponseEntity.ok(monthlyBsum);
