@@ -68,7 +68,7 @@ public class BudgetsPodioService {
 
             Long joursRestant = ChronoUnit.DAYS.between(datelimit, datefintime);
             String warning = "";
-            if (joursRestant <= 10){
+            if (joursRestant <= 10){ 
                 warning = "Il ne vous reste que "+joursRestant+" jours avant la fin du budget";
             }
 
@@ -189,6 +189,7 @@ public class BudgetsPodioService {
     }
     //Alert auto
 
+    //transfer de budget pour un nouveau budget si la date du budget s'expire
 
 }
 

@@ -51,7 +51,7 @@ public class DepensesServiceImpl implements DepensesService {
         BigDecimal montantRestant = budget.getMontant().subtract(totalDepenses);
 
         if (depenses.getMontant().compareTo(montantRestant) > 0) {
-            return "Le montant de la dépense dépasse le montant  du budget: " + budget.getMontant() + " FCFA";
+            return "Le montant de la dépense dépasse le montant restant du budget: " + montantRestant + " FCFA";
         }
 
         montantRestant = montantRestant.subtract(depenses.getMontant());
