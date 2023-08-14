@@ -15,9 +15,13 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
+
 import java.util.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Service
 @Data
@@ -68,7 +72,7 @@ public class BudgetsPodioService {
         //Verifions que la date est en accord avec le budget precedent s'il existe
 
         if (budgetService.Notactive(date,budgetsPodio.getId_users(),budgetsPodio.getId_categories())){
-        if (datepasse.isBefore(date) && dateToday.isAfter(date) || date.equals(dateToday)){
+        if (datepasse.isBefore(date) && (dateToday.minusMonths(1).plusYears(1).isAfter(date))||dateToday.minusMonths(1).plusYears(1).isEqual(date)){
             Budgets budgets = new Budgets();
             //determinons la date de fin
             LocalDateTime datefintime = date.atStartOfDay().plusMonths(1);
@@ -134,7 +138,8 @@ public class BudgetsPodioService {
         List<Budgets> list = new ArrayList<>();
         if (choix==1){
             //Mois courant
-            list = budgetsRepository.findAllByUsers_IdAndFinAfterOrFinEquals(id,LocalDate.now(),LocalDate.now());
+            LocalDate localDate = LocalDate.now();
+            list = budgetsRepository.findAllBycurrentbudget(localDate,id);
         } else if (choix == 2) {
             //Essayons d'obtenir une liste des budget passe
             //Obtenons d'abord la liste des categorie disponible
@@ -143,23 +148,18 @@ public class BudgetsPodioService {
             //Maintenant obtenons le dernier budget defini pour chaque categorie
 
             for (Long categorie: categoriesList ) {
-                List<Budgets> results  = budgetsRepository.findDistinctFinByUsers_IdAndCategories_IdOrderByFinDesc(id,categorie);
-                if (results.size()==1){
-                    //Ca veut dire qu'un budget defini pour cette categorie donc verifions que ce n'est pas un mois courant
-                    if (!budgetService.Incurrentbudget(results.get(0).getFin(),id,categorie)){
-                        list.add(results.get(0));
-                    }
-                } else if (results.size()>=2) {
-                    //ca veut dire qu'on au moins deux date
-                    if (!budgetService.Incurrentbudget(results.get(0).getFin(),id,categorie)){
-                        list.add(results.get(0));
+                List<Budgets> results  = budgetsRepository.findoldbudget(LocalDate.now(),id,categorie);
+                if (!results.isEmpty()){
+                    if (budgetService.Incurrentbudget(results.get(0).getFin(),id,categorie)){
+                        if (results.size()>1){
+                            list.add(results.get(1));
+                        }
                     }else {
-                        list.add(results.get(1));
+                        list.add(results.get(0));
                     }
                 }
-            }
 
-
+                }
         }else {
             list = budgetsRepository.findAllByUsers_IdOrderByFinDesc(id);
         }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 
@@ -20,12 +21,12 @@ public class UsersServiceImpl implements UsersService {
     // creation
     @Override
     public String creer(Users users) {
-        Users nouvelUtilisateur = usersRepository.save(users);
-        if (nouvelUtilisateur != null) {
-            return "Utilisateur créé avec succès";
-        } else {
-            return "Erreur lors de la création de l'utilisateur.";
+        try {
+            Users nouvelUtilisateur = usersRepository.save(users);
+        }catch (DataAccessException e){
+            return "Donnee incorrecte";
         }
+            return "Utilisateur créé avec succès";
     }
     
 

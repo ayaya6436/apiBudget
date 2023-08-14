@@ -14,6 +14,7 @@ import apiBudget.apiBudget.repository.DepensesRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Data
@@ -50,8 +51,8 @@ public class BudgetServiceImpl implements BudgetService{
     }
 
     @Override
-    public String modifier(Long id,Budgets budgets) {
-        return budgetsRepository.findById(id)
+    public String modifier(Long id,Long idu ,Budgets budgets) {
+        return budgetsRepository.findByIdAndUsers_Id(id,idu)
                 .map(test->{
                     test.setMontant(budgets.getMontant());
                     test.setDebut(budgets.getDebut());
@@ -133,18 +134,12 @@ public class BudgetServiceImpl implements BudgetService{
     @Override
     public Boolean Incurrentbudget(LocalDate date,Long id_user, Long id_categorie){
         LocalDate datetoday = LocalDate.now();
-        List<Budgets> budgets = budgetsRepository.findDistinctFinByUsers_IdAndCategories_IdOrderByFinDesc(id_user,id_categorie);
-        if (!budgets.isEmpty()){
-            if ((datetoday.isAfter(budgets.get(0).getDebut())||datetoday.isEqual(budgets.get(0).getDebut())) && (datetoday.isBefore(budgets.get(0).getFin()) || datetoday.isEqual(budgets.get(0).getFin()))){
+         Budgets budgets = budgetsRepository.findcurrentbudget(datetoday,id_user,id_categorie);
+        if (budgets!=null){
                 //ca veut dire qu'il y a un budget courant pour cette categorie
-                if (date.isAfter(budgets.get(0).getDebut())||date.isEqual(budgets.get(0).getDebut()) && date.isBefore(budgets.get(0).getFin()) || date.isEqual(budgets.get(0).getFin())){
-                    return true;
-                }
-                return false;
+                return true;
             }
             return false;
-        }
-        return false;
     }
 
     @Override

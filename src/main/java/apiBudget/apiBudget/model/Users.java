@@ -45,7 +45,7 @@ public class Users {
    @Size(min = 3 ,message = "Le nom est trop court", max = 225)
    private String prenom;
 
-   @Column(length = 50)
+   @Column(length = 50,unique = true)
    @Email(message = "L'adresse email doit être valide")
    @NotBlank(message = "L'adresse email ne doit pas être vide")
    private String email;
